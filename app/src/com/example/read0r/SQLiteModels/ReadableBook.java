@@ -16,11 +16,12 @@ public class ReadableBook {
 		this.positionPointer = positionPointer;
 	}
 
-	String fileAddress;
-	String title;
-	String author;
-	int pages;
-	String category;
+	public int id;
+	public String fileAddress;
+	public String title;
+	public String author;
+	public int pages;
+	public String category;
 
-	long positionPointer;
+	public long positionPointer;
 }

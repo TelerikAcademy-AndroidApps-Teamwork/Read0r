@@ -6,16 +6,27 @@ import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class SettingsActivity extends ActionBarActivity {
 
+	private int theme;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		
+		this.theme = this.getResources().getInteger(R.integer.theme);
+		
+		this.applyTheme();
+	}
+
+	private void applyTheme() {
+		// TODO : Apply the theme
 	}
 
 	@Override
@@ -35,5 +46,14 @@ public class SettingsActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	void goBack() {
+		this.finish();
+	}
+
+	void saveSettings() {
+		// TODO : Save the settings
+		this.goBack();
 	}
 }

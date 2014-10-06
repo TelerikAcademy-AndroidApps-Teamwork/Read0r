@@ -1,8 +1,9 @@
-package com.example.read0r.Interfaces;
+package com.example.read0r;
 
 import java.math.BigInteger;
 
-import com.example.read0r.Read0rWord;
+import com.example.read0r.Interfaces.IDocumentReader;
+import com.example.read0r.Interfaces.IRead0rQueue;
 
 public class Read0rQueueHandler {
 	private IRead0rQueue queue;

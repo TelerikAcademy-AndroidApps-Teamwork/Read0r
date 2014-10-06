@@ -1187,6 +1187,9 @@ containing a value of this type.
          showAsAction="ifRoom" items can fit. "always" items can override this. 
          */
         public static final int abc_max_action_buttons=0x7f090000;
+        public static final int fontSize=0x7f090003;
+        public static final int speedPercent=0x7f090001;
+        public static final int theme=0x7f090002;
     }
     public static final class layout {
         public static final int abc_action_bar_decor=0x7f030000;

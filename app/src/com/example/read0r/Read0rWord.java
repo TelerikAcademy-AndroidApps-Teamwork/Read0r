@@ -11,16 +11,16 @@ public class Read0rWord {
 		return result;
 	}
 
-	String getWord() {
+	public String getWord() {
 		return word;
 	}
 
-	void setWord(String word) {
+	public void setWord(String word) {
 		this.word = word;
 		this.milliSeconds = calcMilliSeconds();
 	}
 
-	int getMilliSeconds() {
+	public int getMilliSeconds() {
 		return milliSeconds;
 	}
 

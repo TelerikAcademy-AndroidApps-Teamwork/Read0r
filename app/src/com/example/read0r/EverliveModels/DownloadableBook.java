@@ -12,11 +12,13 @@ public class DownloadableBook {
 		this.author = author;
 		this.pages = pages;
 		this.category = category;
+		this.isOwned = false;
 	}
 
-	String downloadAddress;
-	String title;
-	String author;
-	int pages;
-	String category;
+	public String downloadAddress;
+	public String title;
+	public String author;
+	public int pages;
+	public String category;
+	public boolean isOwned;
 }

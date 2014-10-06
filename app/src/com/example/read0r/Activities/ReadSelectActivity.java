@@ -4,18 +4,35 @@ import com.example.read0r.R;
 import com.example.read0r.R.id;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
+import com.example.read0r.SQLiteModels.ReadableBook;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class ReadSelectActivity extends ActionBarActivity {
 
+	private Intent readIntent;
+	private int theme;
+	private ReadableBook currentBook;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download_filter);
+		
+		this.readIntent = new Intent(ReadSelectActivity.this,
+				ReadActivity.class);
+		
+		this.theme = this.getResources().getInteger(R.integer.theme);
+		
+		this.applyTheme();
+	}
+
+	private void applyTheme() {
+		// TODO : Apply the theme
 	}
 
 	@Override
@@ -35,5 +52,14 @@ public class ReadSelectActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	void goBack() {
+		this.finish();
+	}
+
+	void goToRead() {
+		this.readIntent.putExtra("bookId", this.currentBook.id);
+		this.startActivity(this.readIntent);
 	}
 }
