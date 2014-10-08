@@ -4,5 +4,25 @@
     <string name="app_name">Read0r</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- Titles -->
+    <string name="MainMenuTitle">Wellcome, Read0r!</string>
+    <string name="DownloadTitle">Download Reads!</string>
+    <string name="DownloadFilterTitle">Filter them, Read0r!</string>
+    <string name="ReadSelectTitle">Choose wisely, Read0r!</string>
+    <string name="SettingsTitle">Your word is my command!</string>
+    
+    <!-- Buttons -->
+    <string name="ReadBtn">Read</string>
+    <string name="DownloadBtn">Download</string>
+    <string name="SettingsBtn">Settings</string>
+    <string name="QuitBtn">Quit</string>
+    <string name="FilterBtn">Filter</string>
+    <string name="BackBtn">Back</string>
+    <string name="SaveBtn">Save</string>
+    <string name="StopBtn">Stop</string>
+    <string name="PauseBtn">Pause</string>
+    <string name="ResumeBtn">Resume</string>
+    <string name="CancelBtn">Cancel</string>
 
 </resources>

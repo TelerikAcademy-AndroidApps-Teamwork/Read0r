@@ -9,7 +9,7 @@ public class Read0rQueueHandler {
 	private IRead0rQueue queue;
 	private IDocumentReader reader;
 	private int partitionSize;
-	private long currentIndex;
+	private int currentIndex;
 
 	public Read0rQueueHandler(IRead0rQueue queue, IDocumentReader reader) {
 		this.queue = queue;
@@ -21,7 +21,7 @@ public class Read0rQueueHandler {
 	}
 
 	public Read0rQueueHandler(IRead0rQueue queue, IDocumentReader reader,
-			long startIndex) {
+			int startIndex) {
 		this.queue = queue;
 		this.reader = reader;
 		this.currentIndex = startIndex;
@@ -29,7 +29,7 @@ public class Read0rQueueHandler {
 	}
 
 	public Read0rQueueHandler(IRead0rQueue queue, IDocumentReader reader,
-			long startIndex, int partitionSize) {
+			int startIndex, int partitionSize) {
 		this.queue = queue;
 		this.reader = reader;
 		this.currentIndex = startIndex;
@@ -39,11 +39,20 @@ public class Read0rQueueHandler {
 	public boolean isDocumentOver() {
 		return this.queue.count() == 0;
 	}
-	
+
 	public Read0rWord getNextWord() {
+		if (this.queue.count() == 0) {
+			Read0rWord word = new Read0rWord("end of document.");
+			word.setMilliSeconds(-1);
+			return word;
+		}
+		
 		Read0rWord result = this.queue.getNext();
+		
 		if (this.queue.count() <= 50) {
-			loadMoreWords();
+			if (!this.reader.endReached()) {
+				loadMoreWords();
+			}
 		}
 		return result;
 	}
@@ -55,7 +64,7 @@ public class Read0rQueueHandler {
 
 	private void loadMoreWords() {
 		String[] words = reader.getNextWordPortion(this.currentIndex);
-		for(String word : words) {
+		for (String word : words) {
 			Read0rWord queueItem = new Read0rWord(word);
 			this.queue.add(queueItem);
 		}

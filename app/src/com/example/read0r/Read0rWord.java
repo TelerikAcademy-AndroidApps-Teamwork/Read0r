@@ -6,6 +6,9 @@ public class Read0rWord {
 		this.milliSeconds = calcMilliSeconds();
 	}
 
+	private String word;
+	private int milliSeconds;
+	
 	protected int calcMilliSeconds() {
 		int result = 100 + this.getWord().length() * 20;
 		return result;
@@ -23,7 +26,8 @@ public class Read0rWord {
 	public int getMilliSeconds() {
 		return milliSeconds;
 	}
-
-	private String word;
-	private int milliSeconds;
+	
+	public void setMilliSeconds(int ms) {
+		this.milliSeconds = ms;
+	}
 }

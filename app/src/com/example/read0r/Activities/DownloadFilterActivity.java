@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class DownloadFilterActivity extends ActionBarActivity {
 
@@ -69,7 +70,7 @@ public class DownloadFilterActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void goBackSave() {
+	public void goBackSave(View v) {
 		this.backIntent.putExtra("filters", this.filters);
 		
 		this.startActivity(this.backIntent);
@@ -83,8 +84,8 @@ public class DownloadFilterActivity extends ActionBarActivity {
 		finish();
 	}
 
-	void goBackCancel() {
+	public void goBackCancel(View v) {
 		this.initFilters();
-		this.goBackSave();
+		this.goBackSave(v);
 	}
 }

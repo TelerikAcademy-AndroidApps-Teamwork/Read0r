@@ -10,13 +10,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-public class MainMenuActivity extends ActionBarActivity {
+public class MainMenuActivity extends ActionBarActivity implements OnClickListener {
 
 	private Intent readSelectIntent;
 	private Intent downloadIntent;
 	private Intent settingsIntent;
 	private int theme;
+	private Button readBtn;
+	private Button downloadBtn;
+	private Button settingsBtn;
+	private Button quitBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +36,16 @@ public class MainMenuActivity extends ActionBarActivity {
 				DownloadActivity.class);
 		this.settingsIntent = new Intent(MainMenuActivity.this,
 				SettingsActivity.class);
+
+		this.readBtn = (Button) this.findViewById(R.id.main_readButton);
+		this.downloadBtn = (Button) this.findViewById(R.id.main_downloadButton);
+		this.settingsBtn = (Button) this.findViewById(R.id.main_settingsButton);
+		this.quitBtn = (Button) this.findViewById(R.id.main_quitButton);
+
+		this.readBtn.setOnClickListener(this);
+		this.downloadBtn.setOnClickListener(this);
+		this.settingsBtn.setOnClickListener(this);
+		this.quitBtn.setOnClickListener(this);
 		
 		this.theme = this.getResources().getInteger(R.integer.theme);
 		
@@ -58,20 +75,33 @@ public class MainMenuActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void goToDownload() {
+	public void onClick(View v) {
+		if (v.getId() == R.id.main_readButton) {
+			goToReadSelect();
+		} else if (v.getId() == R.id.main_downloadButton) {
+			goToDownload();
+		} else if (v.getId() == R.id.main_settingsButton) {
+			goToSettings();
+		} else if (v.getId() == R.id.main_quitButton) {
+			quit();
+		}
+	}
+
+	public void goToDownload() {
 		this.startActivity(this.downloadIntent);
 	}
 
-	void goToReadSelect() {
+	public void goToReadSelect() {
 		this.startActivity(this.readSelectIntent);
 
 	}
 
-	void goToSettings() {
+	public void goToSettings() {
 		this.startActivity(this.settingsIntent);
 	}
 
-	void quit() {
+	public void quit() {
 		throw new Error("Not Implemented");
 	}
+
 }

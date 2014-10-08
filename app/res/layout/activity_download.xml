@@ -9,51 +9,57 @@
     tools:context="com.example.read0r.Activities.DownloadActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/download_pageTrackerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/download_textView1"
+        android:layout_centerHorizontal="true"
+        android:text="(0-0) of 0"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/download_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Download Reads!"
+        android:text="@string/DownloadTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <LinearLayout
+        android:id="@+id/download_linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" >
+
+        <Button
+            android:id="@+id/download_backButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/back"
+            android:text="@string/BackBtn" />
+
+        <Button
+            android:id="@+id/download_filterButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/tag"
+            android:text="@string/FilterBtn" />
+    </LinearLayout>
+
     <ListView
-        android:id="@+id/readsListView"
+        android:id="@+id/download_listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/backButton"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp" >
+        android:layout_above="@+id/download_linearLayout1"
+        android:layout_alignLeft="@+id/download_linearLayout1"
+        android:layout_below="@+id/download_pageTrackerTextView"
+        android:layout_marginTop="21dp" >
 
     </ListView>
-
-    <TextView
-        android:id="@+id/pageTrackerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
-        android:text="(1-5) of 53"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/readsListView"
-        android:layout_alignParentBottom="true"
-        android:text="Back" />
-
-    <Button
-        android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/backButton"
-        android:layout_alignBottom="@+id/backButton"
-        android:layout_alignRight="@+id/readsListView"
-        android:text="Filter" />
 
 </RelativeLayout>

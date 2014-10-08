@@ -1,22 +1,25 @@
 package com.example.read0r;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import com.example.read0r.Interfaces.IRead0rQueue;
+import com.example.read0r.SQLiteModels.ReadableBook;
 
 public class Read0rQueue implements IRead0rQueue {
 
+	Queue<Read0rWord> words = new LinkedList<Read0rWord>();
+	
 	public Read0rWord getNext() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.words.poll();
 	}
 
 	public void add(Read0rWord word) {
-		// TODO Auto-generated method stub
-		
+		this.words.add(word);
 	}
 
 	public int count() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.words.size();
 	}
 
 }

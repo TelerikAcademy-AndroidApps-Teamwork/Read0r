@@ -9,40 +9,48 @@
     tools:context="com.example.read0r.Activities.ReadSelectActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/main_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Choose wisely, Read0r!"
+        android:text="@string/ReadSelectTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    
     <ListView
-        android:id="@+id/readsListView"
+        android:id="@+id/main_readsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/backButton"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp" >
+        android:layout_above="@+id/main_linearLayout1"
+        android:layout_below="@+id/main_textView1"
+        android:layout_centerHorizontal="true" >
 
     </ListView>
 
-    <Button
-        android:id="@+id/backButton"
+    <LinearLayout
+        android:id="@+id/main_linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="Back" />
+        android:layout_alignParentRight="true" >
 
-    <Button
-        android:id="@+id/readButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Read" />
+        <Button
+            android:id="@+id/main_backButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/back"
+            android:text="@string/BackBtn" />
+
+        <Button
+            android:id="@+id/main_filterButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/book"
+            android:text="@string/ReadBtn" />
+    </LinearLayout>
+
 
 </RelativeLayout>

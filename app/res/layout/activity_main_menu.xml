@@ -8,23 +8,53 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.read0r.Activities.MainMenuActivity" >
 
+    <LinearLayout
+        android:id="@+id/main_linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_textView1"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/main_readButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp"
+            android:drawableLeft="@drawable/book"
+            android:onClick="goToReadSelect"
+            android:text="@string/ReadBtn" />
+
+        <Button
+            android:id="@+id/main_downloadButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/clould"
+            android:text="@string/DownloadBtn" />
+
+        <Button
+            android:id="@+id/main_settingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/settings"
+            android:text="@string/SettingsBtn" />
+
+        <Button
+            android:id="@+id/main_quitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/quit"
+            android:text="@string/QuitBtn" />
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/main_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Wellcome, Read0r!"
+        android:text="@string/MainMenuTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp" >
-    </ListView>
 
 </RelativeLayout>

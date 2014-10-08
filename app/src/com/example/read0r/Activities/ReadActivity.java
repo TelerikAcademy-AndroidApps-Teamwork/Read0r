@@ -1,8 +1,8 @@
 package com.example.read0r.Activities;
 
 import com.example.read0r.DocumentReader;
-import com.example.read0r.LocalDataHandler;
 import com.example.read0r.R;
+import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.R.id;
 import com.example.read0r.R.integer;
 import com.example.read0r.R.layout;
@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 public class ReadActivity extends ActionBarActivity {
@@ -34,7 +35,7 @@ public class ReadActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_download);
 
 		int bookId = this.getIntent().getExtras().getInt("bookId");
-		ReadableBook document = new LocalDataHandler().getBookById(bookId);
+		ReadableBook document = new FakeLocalDataHandler().getBookById(bookId);
 		this.queueHandler = new Read0rQueueHandler(new Read0rQueue(),
 				new DocumentReader(document));
 
@@ -81,7 +82,7 @@ public class ReadActivity extends ActionBarActivity {
 			// set timeout
 			new android.os.Handler().postDelayed(new Runnable() {
 				public void run() {
-
+					updateWord();
 				}
 			}, this.currentWord.getMilliSeconds());
 		}
@@ -92,7 +93,7 @@ public class ReadActivity extends ActionBarActivity {
 		pauseReading();
 	}
 
-	void pauseReading() {
+	public void pauseReading() {
 		if (this.paused) {
 			this.paused = false;
 			updateWord();
@@ -101,13 +102,13 @@ public class ReadActivity extends ActionBarActivity {
 		}
 	}
 
-	void stopReading() {
+	public void stopReading(View v) {
 		this.paused = true;
 		
-		this.goBack();
+		this.goBack(v);
 	}
 
-	void goBack() {
+	public void goBack(View v) {
 		// not sure about which of those is right...
 		this.finish();
 	}

@@ -1,12 +1,14 @@
 package com.example.read0r.Interfaces;
 
+import java.util.ArrayList;
+
 import com.example.read0r.EverliveModels.DownloadableBook;
 
 public interface IDistantDataHandler {
 	
-	String[] getCategories();
+	ArrayList<String> getCategories();
 
-	DownloadableBook[] getBooks();
+	ArrayList<DownloadableBook> getBooks();
 
-	DownloadableBook[] getFilteredBooks(String[] categories);
+	ArrayList<DownloadableBook> getFilteredBooks(ArrayList<String> categories);
 }

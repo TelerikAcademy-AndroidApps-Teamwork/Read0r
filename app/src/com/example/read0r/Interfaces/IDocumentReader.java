@@ -4,7 +4,8 @@ import java.math.BigInteger;
 
 public interface IDocumentReader {
 
-	public long getCurrentPosition();
+	public int getCurrentPosition();
+	public boolean endReached();
 	public void setPortionSize(int portionSize);
-	public String[] getNextWordPortion(long letterIndex);
+	public String[] getNextWordPortion(int letterIndex);
 }

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class SettingsActivity extends ActionBarActivity {
 
@@ -48,12 +49,12 @@ public class SettingsActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void goBack() {
+	public void goBack(View v) {
 		this.finish();
 	}
 
-	void saveSettings() {
+	public void saveSettings(View v) {
 		// TODO : Save the settings
-		this.goBack();
+		this.goBack(v);
 	}
 }

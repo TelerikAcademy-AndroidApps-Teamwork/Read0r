@@ -8,101 +8,121 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.read0r.Activities.SettingsActivity" >
 
+    <LinearLayout
+        android:id="@+id/download_linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" >
+
+        <Button
+            android:id="@+id/settings_backButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/no"
+            android:text="@string/CancelBtn" />
+
+        <Button
+            android:id="@+id/settings_saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/yes"
+            android:text="@string/SaveBtn" />
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/settings_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Read0r Settings"
+        android:text="@string/SettingsTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText
-        android:id="@+id/EditText01"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/fontTextView"
-        android:layout_alignBottom="@+id/fontTextView"
-        android:layout_toRightOf="@+id/ThemeTextView"
-        android:ems="10" />
+        android:layout_above="@+id/download_linearLayout1"
+        android:layout_alignLeft="@+id/download_linearLayout1"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/settings_textView1"
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/speedTextView"
-        android:layout_alignBottom="@+id/speedTextView"
-        android:layout_alignLeft="@+id/EditText01"
-        android:layout_alignRight="@+id/EditText01"
-        android:ems="10" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="horizontal" >
 
-        <requestFocus />
-    </EditText>
+            <TextView
+                android:id="@+id/settings_speedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed: "
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <RadioButton
-        android:id="@+id/blackThemeRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/speedTextView"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="115dp"
-        android:text="Black" />
+            <EditText
+                android:id="@+id/settings_speedInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number" >
 
-    <TextView
-        android:id="@+id/ThemeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/whiteThemeRadioButton"
-        android:layout_alignLeft="@+id/speedTextView"
-        android:text="Theme color:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/fontTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ThemeTextView"
-        android:layout_below="@+id/blackThemeRadioButton"
-        android:layout_marginTop="28dp"
-        android:text="Font size:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="horizontal" >
 
-    <RadioButton
-        android:id="@+id/whiteThemeRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/fontTextView"
-        android:layout_alignLeft="@+id/EditText01"
-        android:text="White" />
+            <TextView
+                android:id="@+id/settings_fontLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Font size: "
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/speedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ThemeTextView"
-        android:layout_marginBottom="22dp"
-        android:text="Speed (%):"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+            <EditText
+                android:id="@+id/settings_fontInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/blackThemeRadioButton"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="32dp"
-        android:layout_toLeftOf="@+id/EditText01"
-        android:text="Cancel" />
+        <TextView
+            android:id="@+id/settings_themeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Theme"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignRight="@+id/EditText01"
-        android:layout_toRightOf="@+id/whiteThemeRadioButton"
-        android:text="Save" />
-        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/settings_darkRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dark"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RadioButton
+                android:id="@+id/settings_lightRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Light"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
+    </LinearLayout>
+
 </RelativeLayout>

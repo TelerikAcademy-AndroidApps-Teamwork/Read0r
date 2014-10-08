@@ -9,40 +9,48 @@
     tools:context="com.example.read0r.Activities.DownloadFilterActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/filter_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Filter them, Read0r!"
+        android:text="@string/DownloadFilterTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ListView
-        android:id="@+id/filterCategoriesListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/backButton"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp" >
-
-    </ListView>
-
-    <Button
-        android:id="@+id/backButton"
+    <LinearLayout
+        android:id="@+id/filter_linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="Back" />
+        android:layout_alignParentRight="true" >
 
-    <Button
-        android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/filter_backButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/back"
+            android:text="@string/BackBtn" />
+
+        <Button
+            android:id="@+id/filter_filterButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/tag"
+            android:text="@string/FilterBtn" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/filter_listView1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Filter" />
+        android:layout_above="@+id/filter_linearLayout1"
+        android:layout_alignLeft="@+id/filter_linearLayout1"
+        android:layout_below="@+id/filter_textView1"
+        android:layout_marginTop="28dp" >
+
+    </ListView>
 
 </RelativeLayout>

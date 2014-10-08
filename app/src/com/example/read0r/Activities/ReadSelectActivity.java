@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class ReadSelectActivity extends ActionBarActivity {
 
@@ -54,11 +55,11 @@ public class ReadSelectActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void goBack() {
+	public void goBack(View v) {
 		this.finish();
 	}
 
-	void goToRead() {
+	public void goToRead(View v) {
 		this.readIntent.putExtra("bookId", this.currentBook.id);
 		this.startActivity(this.readIntent);
 	}

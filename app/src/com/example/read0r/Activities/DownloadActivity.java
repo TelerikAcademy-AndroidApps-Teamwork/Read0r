@@ -1,13 +1,16 @@
 package com.example.read0r.Activities;
 
-import com.example.read0r.DistantDataHandler;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.example.read0r.DownloadHandler;
-import com.example.read0r.LocalDataHandler;
 import com.example.read0r.R;
 import com.example.read0r.R.id;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
 import com.example.read0r.EverliveModels.DownloadableBook;
+import com.example.read0r.Fakes.FakeDistantDataHandler;
+import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.IDistantDataHandler;
 import com.example.read0r.SQLiteModels.ReadableBook;
 
@@ -17,16 +20,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
 
-public class DownloadActivity extends ActionBarActivity {
+public class DownloadActivity extends ActionBarActivity implements OnClickListener {
 
 	private Intent downloadFilterIntent;
 	private int theme;
 	private IDistantDataHandler distantDataHandler;
-	private String[] filters;
-	private DownloadableBook[] content;
-	private LocalDataHandler localDataHandler;
+	private ArrayList<String> filters;
+	private ArrayList<DownloadableBook> content;
+	private FakeLocalDataHandler localDataHandler;
 	private DownloadHandler downloadHandler;
+	private Button backBtn;
+	private Button filterBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +46,16 @@ public class DownloadActivity extends ActionBarActivity {
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
 
-		this.distantDataHandler = new DistantDataHandler();
-		this.localDataHandler = new LocalDataHandler();
+		this.distantDataHandler = new FakeDistantDataHandler();
+		this.localDataHandler = new FakeLocalDataHandler();
 		this.downloadHandler = new DownloadHandler();
 
+		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
+		this.filterBtn = (Button) this.findViewById(R.id.download_filterButton);
+
+		this.backBtn.setOnClickListener(this);
+		this.filterBtn.setOnClickListener(this);
+		
 		this.applyTheme();
 		this.updateFilters(this.getIntent());
 		this.updateContent();
@@ -53,15 +67,19 @@ public class DownloadActivity extends ActionBarActivity {
 
 	private void updateFilters(Intent data) {
 		if (data.hasExtra("filters")) {
-			this.filters = data.getStringArrayExtra("filters");
+			String[] filts = data.getStringArrayExtra("filters");
+			this.filters = new ArrayList<String>();
+			for (String string : filts) {
+				this.filters.add(string);
+			}
 		} else {
-			this.filters = new String[0];
+			this.filters = new ArrayList<String>();
 		}
 	}
 
 	private void updateContent() {
 		this.content = this.distantDataHandler.getFilteredBooks(this.filters);
-		ReadableBook[] ownedBooks = this.localDataHandler.getBooks();
+		ArrayList<ReadableBook> ownedBooks = this.localDataHandler.getBooks();
 
 		for (DownloadableBook book : this.content) {
 			for (ReadableBook ownedBook : ownedBooks) {
@@ -98,11 +116,19 @@ public class DownloadActivity extends ActionBarActivity {
 		updateFilters(data);
 	}
 
-	void goBack() {
+	public void onClick(View v) {
+		if (v.getId() == R.id.download_backButton) {
+			goBack();
+		} else if (v.getId() == R.id.download_filterButton) {
+			goToDownloadFilter();
+		}
+	}
+	
+	public void goBack() {
 		this.finish();
 	}
 
-	void goToDownloadFilter() {
+	public void goToDownloadFilter() {
 		this.downloadFilterIntent.putExtra("filters", this.filters);
 		this.startActivityForResult(this.downloadFilterIntent, 1);
 	}
@@ -112,8 +138,15 @@ public class DownloadActivity extends ActionBarActivity {
 		// TODO : Get the selected book, and replace the dummy one
 
 		ReadableBook downloadedBook = this.downloadHandler
-				.downloadBook(dummyBook_PlsReplaceMe);
+				.downloadBook(this, dummyBook_PlsReplaceMe);
 		this.localDataHandler.addBook(downloadedBook);
 		this.updateContent();
 	}
+	
+	 public void onBookDownloaded() {
+		Toast toast = new Toast(this);
+		toast.setText("Book Downloaded");
+		toast.show();
+	}
+
 }

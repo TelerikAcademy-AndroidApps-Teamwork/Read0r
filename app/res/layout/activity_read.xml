@@ -9,48 +9,56 @@
     tools:context="com.example.read0r.Activities.ReadActivity" >
 
     <TextView
-        android:id="@+id/titleView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Read Title!"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/read_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Current word"
+        android:text="&lt;Current word>"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/stopButton"
+    <LinearLayout
+        android:id="@+id/download_linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="Stop" />
+        android:layout_alignParentRight="true" >
 
-    <Button
-        android:id="@+id/pauseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Pause" />
+        <Button
+            android:id="@+id/read_stopButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/back"
+            android:text="@string/StopBtn" />
+
+        <Button
+            android:id="@+id/read_pauseButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:drawableLeft="@drawable/stop"
+            android:text="@string/PauseBtn" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/progressView"
+        android:id="@+id/read_progressView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/titleView"
+        android:layout_below="@+id/read_titleView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
-        android:text="12%"
+        android:text="&lt;12%>"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/read_titleView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="&lt;Book Title>"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
