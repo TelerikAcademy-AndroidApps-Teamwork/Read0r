@@ -1,10 +1,10 @@
 package com.example.read0r.Activities;
 
 import com.example.read0r.R;
+import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.R.id;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
-import com.example.read0r.SQLiteModels.ReadableBook;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
@@ -12,22 +12,32 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-public class ReadSelectActivity extends ActionBarActivity {
+public class ReadSelectActivity extends ActionBarActivity implements OnClickListener{
 
 	private Intent readIntent;
 	private int theme;
 	private ReadableBook currentBook;
+	private Button backBtn;
+	private Button readBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_download_filter);
+		setContentView(R.layout.activity_read_select);
 		
 		this.readIntent = new Intent(ReadSelectActivity.this,
 				ReadActivity.class);
 		
 		this.theme = this.getResources().getInteger(R.integer.theme);
+
+		this.backBtn = (Button) this.findViewById(R.id.select_backButton);
+		this.readBtn = (Button) this.findViewById(R.id.select_readButton);
+
+		this.backBtn.setOnClickListener(this);
+		this.readBtn.setOnClickListener(this);
 		
 		this.applyTheme();
 	}
@@ -55,12 +65,20 @@ public class ReadSelectActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void goBack(View v) {
+	public void goBack() {
 		this.finish();
 	}
 
-	public void goToRead(View v) {
+	public void goToRead() {
 		this.readIntent.putExtra("bookId", this.currentBook.id);
 		this.startActivity(this.readIntent);
+	}
+
+	public void onClick(View v) {
+		if (v.getId() == R.id.select_backButton) {
+			goBack();
+		} else if (v.getId() == R.id.select_readButton) {
+			goToRead();
+		}
 	}
 }

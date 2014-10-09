@@ -1,4 +1,4 @@
-package com.example.read0r.EverliveModels;
+package com.example.read0r.Models;
 
 public class DownloadableBook {
 	public DownloadableBook() {

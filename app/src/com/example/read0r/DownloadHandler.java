@@ -13,9 +13,9 @@ import android.os.Environment;
 import android.os.PowerManager;
 
 import com.example.read0r.Activities.DownloadActivity;
-import com.example.read0r.EverliveModels.DownloadableBook;
 import com.example.read0r.Interfaces.IDownloadHandler;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.DownloadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public class DownloadHandler implements IDownloadHandler {
 

@@ -1,30 +1,36 @@
 package com.example.read0r.Activities;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.example.read0r.DownloadHandler;
 import com.example.read0r.R;
-import com.example.read0r.R.id;
-import com.example.read0r.R.layout;
-import com.example.read0r.R.menu;
-import com.example.read0r.EverliveModels.DownloadableBook;
 import com.example.read0r.Fakes.FakeDistantDataHandler;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.IDistantDataHandler;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.DownloadableBook;
+import com.example.read0r.Models.ReadableBook;
+import com.example.read0r.Views.DownloadableBookWidget;
 
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class DownloadActivity extends ActionBarActivity implements OnClickListener {
+public class DownloadActivity extends ActionBarActivity{
 
 	private Intent downloadFilterIntent;
 	private int theme;
@@ -35,6 +41,8 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 	private DownloadHandler downloadHandler;
 	private Button backBtn;
 	private Button filterBtn;
+	private DownloadableBookWidget booksWidget;
+	private TextView pageCounter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +60,21 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 
 		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
 		this.filterBtn = (Button) this.findViewById(R.id.download_filterButton);
+		this.pageCounter = (TextView) this.findViewById(R.id.download_pageTrackerTextView);
+		this.booksWidget = (DownloadableBookWidget) this
+				.findViewById(R.id.download_booksWidget);
 
-		this.backBtn.setOnClickListener(this);
-		this.filterBtn.setOnClickListener(this);
-		
+		this.backBtn.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				goBack();
+			}
+		});
+		this.filterBtn.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				goToDownloadFilter();
+			}
+		});
+
 		this.applyTheme();
 		this.updateFilters(this.getIntent());
 		this.updateContent();
@@ -67,14 +86,12 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 
 	private void updateFilters(Intent data) {
 		if (data.hasExtra("filters")) {
-			String[] filts = data.getStringArrayExtra("filters");
-			this.filters = new ArrayList<String>();
-			for (String string : filts) {
-				this.filters.add(string);
+			this.filters = (ArrayList<String>) data.getExtras().get("filters");
+			if (this.filters != null) {
+				return;
 			}
-		} else {
-			this.filters = new ArrayList<String>();
 		}
+		this.filters = this.distantDataHandler.getCategories();
 	}
 
 	private void updateContent() {
@@ -89,7 +106,7 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 			}
 		}
 
-		// TODO : Display books
+		this.booksWidget.setBooks(this.content);
 	}
 
 	@Override
@@ -116,12 +133,8 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 		updateFilters(data);
 	}
 
-	public void onClick(View v) {
-		if (v.getId() == R.id.download_backButton) {
-			goBack();
-		} else if (v.getId() == R.id.download_filterButton) {
-			goToDownloadFilter();
-		}
+	public void updatePageCounter(String text) {
+		this.pageCounter.setText(text);
 	}
 	
 	public void goBack() {
@@ -137,16 +150,17 @@ public class DownloadActivity extends ActionBarActivity implements OnClickListen
 		DownloadableBook dummyBook_PlsReplaceMe = new DownloadableBook();
 		// TODO : Get the selected book, and replace the dummy one
 
-		ReadableBook downloadedBook = this.downloadHandler
-				.downloadBook(this, dummyBook_PlsReplaceMe);
+		ReadableBook downloadedBook = this.downloadHandler.downloadBook(this,
+				dummyBook_PlsReplaceMe);
 		this.localDataHandler.addBook(downloadedBook);
 		this.updateContent();
 	}
-	
-	 public void onBookDownloaded() {
+
+	public void onBookDownloaded() {
 		Toast toast = new Toast(this);
 		toast.setText("Book Downloaded");
 		toast.show();
 	}
 
+	
 }

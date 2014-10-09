@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import android.os.Environment;
 
-import com.example.read0r.EverliveModels.DownloadableBook;
 import com.example.read0r.Interfaces.IDistantDataHandler;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.DownloadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public class FakeDistantDataHandler implements IDistantDataHandler {
 
@@ -17,13 +17,48 @@ public class FakeDistantDataHandler implements IDistantDataHandler {
 		this.books.add(new DownloadableBook("http//fake.com",
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-
 		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
 				"Hallo, trainer", "???", 1, "fiction"));
-
 		this.books.add(new DownloadableBook("http//fake.com",
 				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
 				"fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+				"Hallo, trainer", "???", 1, "fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
+				"fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+				"Hallo, trainer", "???", 1, "fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
+				"fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+				"Hallo, trainer", "???", 1, "fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
+				"fiction"));
+		this.books.add(new DownloadableBook("http//fake.com",
+				"About_speed_reading.read0r", "Fast Reading Description",
+				"???", 4, "science"));
+
 	}
 
 	public ArrayList<String> getCategories() {

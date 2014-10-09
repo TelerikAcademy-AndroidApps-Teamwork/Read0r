@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.example.read0r.Interfaces.IRead0rQueue;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public class Read0rQueue implements IRead0rQueue {
 

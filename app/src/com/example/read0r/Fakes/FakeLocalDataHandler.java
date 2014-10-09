@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.os.Environment;
 
 import com.example.read0r.Interfaces.ILocalDataHandler;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public class FakeLocalDataHandler implements ILocalDataHandler {
 

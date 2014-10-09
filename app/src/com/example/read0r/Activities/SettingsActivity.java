@@ -7,22 +7,44 @@ import com.example.read0r.R.menu;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.RadioButton;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends ActionBarActivity implements
+		OnClickListener {
 
 	private int theme;
+	private RadioButton lightThemeRadio;
+	private RadioButton darkThemeRadio;
+	private Button backBtn;
+	private Button saveBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+
+		this.backBtn = (Button) this.findViewById(R.id.settings_backButton);
+		this.saveBtn = (Button) this.findViewById(R.id.settings_saveButton);
+
+		this.lightThemeRadio = (RadioButton) this
+				.findViewById(R.id.settings_lightRadio);
+		this.darkThemeRadio = (RadioButton) this
+				.findViewById(R.id.settings_darkRadio);
+
+		this.backBtn.setOnClickListener(this);
+		this.saveBtn.setOnClickListener(this);
+		this.lightThemeRadio.setOnClickListener(this);
+		this.darkThemeRadio.setOnClickListener(this);
 		
 		this.theme = this.getResources().getInteger(R.integer.theme);
-		
+
 		this.applyTheme();
 	}
 
@@ -49,12 +71,30 @@ public class SettingsActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void goBack(View v) {
+	public void goBack() {
 		this.finish();
 	}
 
-	public void saveSettings(View v) {
+	public void saveSettings() {
 		// TODO : Save the settings
-		this.goBack(v);
+		this.goBack();
 	}
+
+	private void changeTheme(int color) {
+		this.theme = color;
+		this.applyTheme();
+	}
+
+	public void onClick(View v) {
+		if (v.getId() == R.id.settings_backButton) {
+			goBack();
+		} else if (v.getId() == R.id.settings_saveButton) {
+			saveSettings();
+		} else if (v.getId() == R.id.settings_darkRadio) {
+			changeTheme(Color.BLACK);
+		} else if (v.getId() == R.id.settings_lightRadio) {
+			changeTheme(Color.WHITE);
+		}
+	}
+
 }

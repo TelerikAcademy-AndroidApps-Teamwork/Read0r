@@ -2,7 +2,7 @@ package com.example.read0r.Interfaces;
 
 import java.util.ArrayList;
 
-import com.example.read0r.EverliveModels.DownloadableBook;
+import com.example.read0r.Models.DownloadableBook;
 
 public interface IDistantDataHandler {
 	

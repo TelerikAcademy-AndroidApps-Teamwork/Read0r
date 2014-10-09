@@ -2,7 +2,7 @@ package com.example.read0r.Interfaces;
 
 import java.util.ArrayList;
 
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public interface ILocalDataHandler {
 

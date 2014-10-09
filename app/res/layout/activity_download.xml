@@ -51,15 +51,12 @@
             android:text="@string/FilterBtn" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/download_listView1"
-        android:layout_width="match_parent"
+    <com.example.read0r.Views.DownloadableBookWidget
+        android:id="@+id/download_booksWidget"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/download_linearLayout1"
-        android:layout_alignLeft="@+id/download_linearLayout1"
-        android:layout_below="@+id/download_pageTrackerTextView"
-        android:layout_marginTop="21dp" >
-
-    </ListView>
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/download_pageTrackerTextView" />
 
 </RelativeLayout>

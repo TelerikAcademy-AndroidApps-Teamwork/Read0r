@@ -9,7 +9,7 @@
     tools:context="com.example.read0r.Activities.ReadSelectActivity" >
 
     <TextView
-        android:id="@+id/main_textView1"
+        android:id="@+id/select_textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -18,17 +18,17 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
     <ListView
-        android:id="@+id/main_readsListView"
+        android:id="@+id/select_readsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/main_linearLayout1"
-        android:layout_below="@+id/main_textView1"
+        android:layout_above="@+id/select_linearLayout1"
+        android:layout_below="@+id/select_textView1"
         android:layout_centerHorizontal="true" >
 
     </ListView>
 
     <LinearLayout
-        android:id="@+id/main_linearLayout1"
+        android:id="@+id/select_linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -36,7 +36,7 @@
         android:layout_alignParentRight="true" >
 
         <Button
-            android:id="@+id/main_backButton"
+            android:id="@+id/select_backButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
@@ -44,7 +44,7 @@
             android:text="@string/BackBtn" />
 
         <Button
-            android:id="@+id/main_filterButton"
+            android:id="@+id/select_readButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"

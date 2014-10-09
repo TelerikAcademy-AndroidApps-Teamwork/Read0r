@@ -3,12 +3,12 @@ package com.example.read0r.Activities;
 import com.example.read0r.DocumentReader;
 import com.example.read0r.R;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
+import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.R.id;
 import com.example.read0r.R.integer;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
 import com.example.read0r.Read0rWord;
-import com.example.read0r.SQLiteModels.ReadableBook;
 import com.example.read0r.Read0rQueue;
 import com.example.read0r.Read0rQueueHandler;
 
@@ -18,9 +18,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
-public class ReadActivity extends ActionBarActivity {
+public class ReadActivity extends ActionBarActivity implements OnClickListener {
 
 	private int theme;
 	private int fontSize;
@@ -28,12 +30,20 @@ public class ReadActivity extends ActionBarActivity {
 	private Read0rWord currentWord;
 	private Read0rQueueHandler queueHandler;
 	private boolean paused;
+	private Button stopBtn;
+	private Button pauseBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_download);
+		setContentView(R.layout.activity_read_select);
 
+		this.stopBtn = (Button) this.findViewById(R.id.read_stopButton);
+		this.pauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
+
+		this.stopBtn.setOnClickListener(this);
+		this.pauseBtn.setOnClickListener(this);
+		
 		int bookId = this.getIntent().getExtras().getInt("bookId");
 		ReadableBook document = new FakeLocalDataHandler().getBookById(bookId);
 		this.queueHandler = new Read0rQueueHandler(new Read0rQueue(),
@@ -89,27 +99,36 @@ public class ReadActivity extends ActionBarActivity {
 	}
 
 	private void onDocumentOver() {
-		Toast.makeText(this, "The document has reached it's end", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "The document has reached it's end",
+				Toast.LENGTH_LONG).show();
 		pauseReading();
 	}
 
 	public void pauseReading() {
 		if (this.paused) {
+			pauseBtn.setText(this.getResources().getInteger(R.string.PauseBtn));
 			this.paused = false;
 			updateWord();
 		} else {
+			pauseBtn.setText(this.getResources().getInteger(R.string.ResumeBtn));
 			this.paused = true;
 		}
 	}
 
-	public void stopReading(View v) {
+	public void stopReading() {
 		this.paused = true;
-		
-		this.goBack(v);
+		this.goBack();
 	}
 
-	public void goBack(View v) {
-		// not sure about which of those is right...
+	public void goBack() {
 		this.finish();
+	}
+
+	public void onClick(View v) {
+		if (v.getId() == R.id.read_stopButton) {
+			stopReading();
+		} else if (v.getId() == R.id.read_pauseButton) {
+			pauseReading();
+		}
 	}
 }

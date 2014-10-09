@@ -1,4 +1,4 @@
-package com.example.read0r.SQLiteModels;
+package com.example.read0r.Models;
 
 public class ReadableBook {
 	public ReadableBook() {

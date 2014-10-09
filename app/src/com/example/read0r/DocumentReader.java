@@ -5,15 +5,18 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import android.R.integer;
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.read0r.Interfaces.IDocumentReader;
-import com.example.read0r.SQLiteModels.ReadableBook;
+import com.example.read0r.Models.ReadableBook;
 
 public class DocumentReader implements IDocumentReader {
 
@@ -42,11 +45,14 @@ public class DocumentReader implements IDocumentReader {
 	public String[] getNextWordPortion(int letterIndex) {
 		ArrayList<String> result = new ArrayList<String>();
 		String textPartition;
+		if (!this.isSDcardAvailable()) {
+			return null;
+		}
 		try {
 			RandomAccessFile raf = new RandomAccessFile(new File(
 					document.fileAddress), "rw");
-			byte[] buffer = new byte[this.portionSize];
-			raf.read(buffer, this.lastPosition * 2, this.portionSize);
+			byte[] buffer = new byte[this.portionSize*2];
+			raf.read(buffer, this.lastPosition, buffer.length);
 
 			textPartition = new String(buffer);
 
@@ -70,8 +76,15 @@ public class DocumentReader implements IDocumentReader {
 		return (String[]) result.toArray();
 	}
 
+	private boolean isSDcardAvailable() {
+		String state = Environment.getExternalStorageState();
+		if (state.equals(Environment.MEDIA_MOUNTED)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean endReached() {
 		return this.endReached;
 	}
-
 }

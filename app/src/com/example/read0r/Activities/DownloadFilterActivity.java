@@ -1,5 +1,7 @@
 package com.example.read0r.Activities;
 
+import java.util.ArrayList;
+
 import com.example.read0r.R;
 import com.example.read0r.R.id;
 import com.example.read0r.R.layout;
@@ -12,12 +14,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-public class DownloadFilterActivity extends ActionBarActivity {
+public class DownloadFilterActivity extends ActionBarActivity implements
+		OnClickListener {
 
 	private Intent backIntent;
 	private int theme;
-	private String[] filters;
+	private ArrayList<String> filters;
+	private Button backBtn;
+	private Button filterBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +35,12 @@ public class DownloadFilterActivity extends ActionBarActivity {
 				DownloadActivity.class);
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
+
+		this.backBtn = (Button) this.findViewById(R.id.filter_backButton);
+		this.filterBtn = (Button) this.findViewById(R.id.filter_filterButton);
+
+		this.backBtn.setOnClickListener(this);
+		this.filterBtn.setOnClickListener(this);
 
 		this.applyTheme();
 		this.initFilters();
@@ -40,15 +53,17 @@ public class DownloadFilterActivity extends ActionBarActivity {
 
 	private void initFilters() {
 		if (this.getIntent().hasExtra("filters")) {
-			this.filters = this.getIntent().getStringArrayExtra("filters");
-		} else {
-			this.filters = new String[0];
+			this.filters = (ArrayList<String>) this.getIntent().getExtras()
+					.get("filters");
+			if (this.filters != null) {
+				return;
+			}
 		}
+		this.filters = new ArrayList<String>();
 	}
 
 	private void drawFilters() {
 		// TODO : draw the menu
-		
 	}
 
 	@Override
@@ -70,22 +85,31 @@ public class DownloadFilterActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void goBackSave(View v) {
+	public void goBackSave() {
 		this.backIntent.putExtra("filters", this.filters);
-		
+
 		this.startActivity(this.backIntent);
-		
+
 		if (getParent() == null) {
-		    setResult(Activity.RESULT_OK, this.backIntent);
+			setResult(Activity.RESULT_OK, this.backIntent);
 		} else {
-		    getParent().setResult(Activity.RESULT_OK, this.backIntent);
+			getParent().setResult(Activity.RESULT_OK, this.backIntent);
 		}
-		
+
 		finish();
 	}
 
-	public void goBackCancel(View v) {
+	public void goBackCancel() {
 		this.initFilters();
-		this.goBackSave(v);
+		this.goBackSave();
+	}
+
+	public void onClick(View v) {
+		if (v.getId() == R.id.filter_backButton) {
+			goBackCancel();
+		} else if (v.getId() == R.id.filter_filterButton) {
+			goBackSave();
+		}
+
 	}
 }
