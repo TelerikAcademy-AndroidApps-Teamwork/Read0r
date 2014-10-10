@@ -13,6 +13,8 @@ public class ReadableBook {
 		this.pages = pages;
 		this.category = category;
 		
+		this.length = 0;
+		
 		this.positionPointer = positionPointer;
 	}
 
@@ -22,6 +24,7 @@ public class ReadableBook {
 	public String author;
 	public int pages;
 	public String category;
+	public int length;
 
 	public long positionPointer;
 }

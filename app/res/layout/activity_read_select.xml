@@ -16,16 +16,6 @@
         android:layout_centerHorizontal="true"
         android:text="@string/ReadSelectTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-    <ListView
-        android:id="@+id/select_readsListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/select_linearLayout1"
-        android:layout_below="@+id/select_textView1"
-        android:layout_centerHorizontal="true" >
-
-    </ListView>
 
     <LinearLayout
         android:id="@+id/select_linearLayout1"
@@ -52,5 +42,13 @@
             android:text="@string/ReadBtn" />
     </LinearLayout>
 
+    <com.example.read0r.Views.ReadableBooksWidget
+        android:id="@+id/readableBooksWidget1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/select_linearLayout1"
+        android:layout_alignLeft="@+id/select_linearLayout1"
+        android:layout_below="@+id/select_textView1"
+        android:background="@drawable/background" />
 
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.example.read0r;
 
 import java.math.BigInteger;
 
+import android.R.integer;
+
 import com.example.read0r.Interfaces.IDocumentReader;
 import com.example.read0r.Interfaces.IRead0rQueue;
 
@@ -46,15 +48,19 @@ public class Read0rQueueHandler {
 			word.setMilliSeconds(-1);
 			return word;
 		}
-		
+
 		Read0rWord result = this.queue.getNext();
-		
+
 		if (this.queue.count() <= 50) {
 			if (!this.reader.endReached()) {
 				loadMoreWords();
 			}
 		}
 		return result;
+	}
+
+	public int getCurrentPosition() {
+		return this.reader.getCurrentPosition() - this.queue.getCharSum();
 	}
 
 	private void init() {

@@ -9,7 +9,7 @@ import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.IDistantDataHandler;
 import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
-import com.example.read0r.Views.DownloadableBookWidget;
+import com.example.read0r.Views.DownloadableBooksWidget;
 
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -41,7 +41,7 @@ public class DownloadActivity extends ActionBarActivity{
 	private DownloadHandler downloadHandler;
 	private Button backBtn;
 	private Button filterBtn;
-	private DownloadableBookWidget booksWidget;
+	private DownloadableBooksWidget booksWidget;
 	private TextView pageCounter;
 
 	@Override
@@ -61,7 +61,7 @@ public class DownloadActivity extends ActionBarActivity{
 		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
 		this.filterBtn = (Button) this.findViewById(R.id.download_filterButton);
 		this.pageCounter = (TextView) this.findViewById(R.id.download_pageTrackerTextView);
-		this.booksWidget = (DownloadableBookWidget) this
+		this.booksWidget = (DownloadableBooksWidget) this
 				.findViewById(R.id.download_booksWidget);
 
 		this.backBtn.setOnClickListener(new OnClickListener() {

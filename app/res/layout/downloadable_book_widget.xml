@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.example.read0r.Views.DownloadableBookWidget
+    <com.example.read0r.Views.DownloadableBooksWidget
         android:id="@+id/downloadableBookWidget1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2" />
 
-    <com.example.read0r.Views.DownloadableBookWidget
+    <com.example.read0r.Views.DownloadableBooksWidget
         android:id="@+id/downloadableBookWidget2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -1,17 +1,10 @@
 package com.example.read0r;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-
-import android.R.integer;
-import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -22,10 +15,11 @@ public class DocumentReader implements IDocumentReader {
 
 	private ReadableBook document;
 
-	private FileInputStream fis;
 	private int portionSize;
 	private int lastPosition;
 	private boolean endReached;
+
+	private RandomAccessFile raf;
 
 	public DocumentReader(ReadableBook document) {
 		this.document = document;
@@ -49,9 +43,13 @@ public class DocumentReader implements IDocumentReader {
 			return null;
 		}
 		try {
-			RandomAccessFile raf = new RandomAccessFile(new File(
-					document.fileAddress), "rw");
-			byte[] buffer = new byte[this.portionSize*2];
+			if (this.raf == null) {
+				this.raf = new RandomAccessFile(new File(document.fileAddress),
+						"rw");
+				this.document.length = (int) (raf.length() /2);
+			}
+			
+			byte[] buffer = new byte[this.portionSize * 2];
 			raf.read(buffer, this.lastPosition, buffer.length);
 
 			textPartition = new String(buffer);
@@ -83,7 +81,7 @@ public class DocumentReader implements IDocumentReader {
 		}
 		return false;
 	}
-	
+
 	public boolean endReached() {
 		return this.endReached;
 	}

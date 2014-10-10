@@ -1281,16 +1281,17 @@ containing a value of this type.
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
         public static final int back=0x7f020057;
-        public static final int book=0x7f020058;
-        public static final int clould=0x7f020059;
-        public static final int clould_down=0x7f02005a;
-        public static final int ic_launcher=0x7f02005b;
-        public static final int no=0x7f02005c;
-        public static final int quit=0x7f02005d;
-        public static final int settings=0x7f02005e;
-        public static final int stop=0x7f02005f;
-        public static final int tag=0x7f020060;
-        public static final int yes=0x7f020061;
+        public static final int background=0x7f020058;
+        public static final int book=0x7f020059;
+        public static final int clould=0x7f02005a;
+        public static final int clould_down=0x7f02005b;
+        public static final int ic_launcher=0x7f02005c;
+        public static final int no=0x7f02005d;
+        public static final int quit=0x7f02005e;
+        public static final int settings=0x7f02005f;
+        public static final int stop=0x7f020060;
+        public static final int tag=0x7f020061;
+        public static final int yes=0x7f020062;
     }
     public static final class id {
         public static final int action_bar=0x7f05002d;
@@ -1369,6 +1370,7 @@ containing a value of this type.
         public static final int read_stopButton=0x7f05005f;
         public static final int read_textView1=0x7f05005e;
         public static final int read_titleView=0x7f050062;
+        public static final int readableBooksWidget1=0x7f050067;
         public static final int right=0x7f050007;
         public static final int search_badge=0x7f050043;
         public static final int search_bar=0x7f050042;
@@ -1380,10 +1382,9 @@ containing a value of this type.
         public static final int search_plate=0x7f050047;
         public static final int search_src_text=0x7f050048;
         public static final int search_voice_btn=0x7f05004c;
-        public static final int select_backButton=0x7f050066;
-        public static final int select_linearLayout1=0x7f050065;
-        public static final int select_readButton=0x7f050067;
-        public static final int select_readsListView=0x7f050064;
+        public static final int select_backButton=0x7f050065;
+        public static final int select_linearLayout1=0x7f050064;
+        public static final int select_readButton=0x7f050066;
         public static final int select_textView1=0x7f050063;
         public static final int settings_backButton=0x7f050068;
         public static final int settings_darkRadio=0x7f050070;

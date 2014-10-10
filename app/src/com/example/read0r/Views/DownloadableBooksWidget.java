@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.Toast;
 
-public class DownloadableBookWidget extends View implements OnGestureListener,
+public class DownloadableBooksWidget extends View implements OnGestureListener,
 		OnScaleGestureListener {
 
 	private List<DownloadableBook> books;
@@ -50,15 +50,15 @@ public class DownloadableBookWidget extends View implements OnGestureListener,
 	private GestureDetector guestureDetector;
 	private ScaleGestureDetector scaleDetector;
 
-	public DownloadableBookWidget(Context context) {
+	public DownloadableBooksWidget(Context context) {
 		this(context, null);
 	}
 
-	public DownloadableBookWidget(Context context, AttributeSet attrs) {
+	public DownloadableBooksWidget(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public DownloadableBookWidget(Context context, AttributeSet attrs,
+	public DownloadableBooksWidget(Context context, AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		this.setBooks(new ArrayList<DownloadableBook>());
@@ -200,9 +200,9 @@ public class DownloadableBookWidget extends View implements OnGestureListener,
 
 	public boolean changePageByFling(float velocityY) {
 		if (velocityY > 0) {
-			goPageDown();
-		} else {
 			goPageUp();
+		} else {
+			goPageDown();
 		}
 		return true;
 	}

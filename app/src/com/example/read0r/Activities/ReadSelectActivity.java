@@ -2,6 +2,7 @@ package com.example.read0r.Activities;
 
 import com.example.read0r.R;
 import com.example.read0r.Models.ReadableBook;
+import com.example.read0r.Views.ReadableBooksWidget;
 import com.example.read0r.R.id;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
@@ -70,6 +71,8 @@ public class ReadSelectActivity extends ActionBarActivity implements OnClickList
 	}
 
 	public void goToRead() {
+		ReadableBooksWidget v = (ReadableBooksWidget)this.findViewById(R.id.readableBooksWidget1);
+		this.currentBook = v.getCurrentBook();
 		this.readIntent.putExtra("bookId", this.currentBook.id);
 		this.startActivity(this.readIntent);
 	}

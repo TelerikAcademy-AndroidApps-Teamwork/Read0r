@@ -6,4 +6,5 @@ public interface IRead0rQueue {
 	public Read0rWord getNext();
 	public void add(Read0rWord word);
 	public int count();
+	public int getCharSum();
 }
