@@ -36,7 +36,11 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_read_select);
+		setContentView(R.layout.activity_read);
+
+		
+		int bookId = this.getIntent().getExtras().getInt("book_id");
+		ReadableBook document = new FakeLocalDataHandler().getBookById(bookId);
 
 		this.stopBtn = (Button) this.findViewById(R.id.read_stopButton);
 		this.pauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
@@ -44,16 +48,17 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 		this.stopBtn.setOnClickListener(this);
 		this.pauseBtn.setOnClickListener(this);
 		
-		int bookId = this.getIntent().getExtras().getInt("bookId");
-		ReadableBook document = new FakeLocalDataHandler().getBookById(bookId);
-		this.queueHandler = new Read0rQueueHandler(new Read0rQueue(),
-				new DocumentReader(document));
+		Read0rQueue queue = new Read0rQueue();
+		DocumentReader reader = new DocumentReader(document);
+		
+		this.queueHandler = new Read0rQueueHandler(queue, reader);
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
 		this.fontSize = this.getResources().getInteger(R.integer.fontSize);
 		this.speedPercent = this.getResources().getInteger(
 				R.integer.speedPercent);
 
+		
 		this.applyTheme();
 	}
 

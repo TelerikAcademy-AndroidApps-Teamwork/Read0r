@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
 public class DownloadFilterActivity extends ActionBarActivity implements
 		OnClickListener {
@@ -25,6 +27,8 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 	private ArrayList<String> filters;
 	private Button backBtn;
 	private Button filterBtn;
+	private ArrayList<String> categories;
+	private LinearLayout categoriesList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,8 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 		this.backBtn = (Button) this.findViewById(R.id.filter_backButton);
 		this.filterBtn = (Button) this.findViewById(R.id.filter_filterButton);
 
+		this.categoriesList = (LinearLayout) this.findViewById(R.id.filter_categoriesList);
+		
 		this.backBtn.setOnClickListener(this);
 		this.filterBtn.setOnClickListener(this);
 
@@ -55,15 +61,44 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 		if (this.getIntent().hasExtra("filters")) {
 			this.filters = (ArrayList<String>) this.getIntent().getExtras()
 					.get("filters");
-			if (this.filters != null) {
-				return;
-			}
+		} else {
+			this.filters = new ArrayList<String>();
 		}
-		this.filters = new ArrayList<String>();
+
+		if (this.getIntent().hasExtra("categories")) {
+			this.categories = (ArrayList<String>) this.getIntent().getExtras()
+					.get("categories");
+		} else {
+			this.categories = new ArrayList<String>();
+		}
 	}
 
 	private void drawFilters() {
-		// TODO : draw the menu
+		this.categoriesList.removeAllViews();
+		
+		for (int i = 0; i < this.categories.size(); i++) {
+			String cat = this.categories.get(i);
+			CheckBox cb = new CheckBox(this);
+			cb.setText(cat);
+			for (String filt : this.filters) {
+				if (filt.equals(cat)) {
+					cb.setChecked(true);
+				}
+			}
+			
+			cb.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					CheckBox chb = (CheckBox)v;
+					if (chb.isChecked()) {
+						filters.add(chb.getText().toString());
+					} else {
+						filters.remove(filters.indexOf(chb.getText().toString()));
+					}
+				}
+			});
+			
+			this.categoriesList.addView(cb);
+		}
 	}
 
 	@Override

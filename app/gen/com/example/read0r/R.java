@@ -1280,18 +1280,19 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int back=0x7f020057;
-        public static final int background=0x7f020058;
-        public static final int book=0x7f020059;
-        public static final int clould=0x7f02005a;
-        public static final int clould_down=0x7f02005b;
-        public static final int ic_launcher=0x7f02005c;
-        public static final int no=0x7f02005d;
-        public static final int quit=0x7f02005e;
-        public static final int settings=0x7f02005f;
-        public static final int stop=0x7f020060;
-        public static final int tag=0x7f020061;
-        public static final int yes=0x7f020062;
+        public static final int attention=0x7f020057;
+        public static final int back=0x7f020058;
+        public static final int background=0x7f020059;
+        public static final int book=0x7f02005a;
+        public static final int clould=0x7f02005b;
+        public static final int clould_down=0x7f02005c;
+        public static final int ic_launcher=0x7f02005d;
+        public static final int no=0x7f02005e;
+        public static final int quit=0x7f02005f;
+        public static final int settings=0x7f020060;
+        public static final int stop=0x7f020061;
+        public static final int tag=0x7f020062;
+        public static final int yes=0x7f020063;
     }
     public static final class id {
         public static final int action_bar=0x7f05002d;
@@ -1305,7 +1306,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050027;
         public static final int action_menu_presenter=0x7f050028;
         public static final int action_mode_close_button=0x7f050035;
-        public static final int action_settings=0x7f050074;
+        public static final int action_settings=0x7f050076;
         public static final int activity_chooser_view_content=0x7f050036;
         public static final int alignBounds=0x7f050002;
         public static final int alignMargins=0x7f050003;
@@ -1339,10 +1340,12 @@ containing a value of this type.
         public static final int fill_horizontal=0x7f05000b;
         public static final int fill_vertical=0x7f050009;
         public static final int filter_backButton=0x7f050055;
+        public static final int filter_categoriesList=0x7f050057;
         public static final int filter_filterButton=0x7f050056;
         public static final int filter_linearLayout1=0x7f050054;
-        public static final int filter_listView1=0x7f050057;
         public static final int filter_textView1=0x7f050053;
+        public static final int finishedBookNotifivation_id=0x7f050074;
+        public static final int finishedDownloadNotifivation_id=0x7f050075;
         public static final int home=0x7f050025;
         public static final int homeAsUp=0x7f050017;
         public static final int horizontal=0x7f050000;
@@ -1472,7 +1475,8 @@ containing a value of this type.
         public static final int activity_read_select=0x7f03001c;
         public static final int activity_settings=0x7f03001d;
         public static final int downloadable_book_widget=0x7f03001e;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001f;
+        public static final int ids=0x7f03001f;
+        public static final int support_simple_spinner_dropdown_item=0x7f030020;
     }
     public static final class menu {
         public static final int main_menu=0x7f0c0000;

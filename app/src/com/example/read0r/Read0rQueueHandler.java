@@ -1,6 +1,8 @@
 package com.example.read0r;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.R.integer;
 
@@ -69,7 +71,7 @@ public class Read0rQueueHandler {
 	}
 
 	private void loadMoreWords() {
-		String[] words = reader.getNextWordPortion(this.currentIndex);
+		List<String> words = reader.getNextWordPortion(this.currentIndex);
 		for (String word : words) {
 			Read0rWord queueItem = new Read0rWord(word);
 			this.queue.add(queueItem);

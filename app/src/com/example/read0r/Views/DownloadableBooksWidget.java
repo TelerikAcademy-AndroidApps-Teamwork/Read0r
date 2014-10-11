@@ -103,11 +103,11 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 
 	@Override
 	public void onDraw(Canvas canvas) {
-	
+
 		if (this.pageChanged) {
 			setCurrentPage();
 		}
-		
+
 		super.onDraw(canvas);
 		for (int i = 0; i < this.curentPage.size(); i++) {
 
@@ -157,10 +157,16 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 			this.curentPage.add(this.books.get(i));
 			i++;
 		}
-		
-		DownloadActivity da = (DownloadActivity)this.getContext();
+
+		DownloadActivity da = (DownloadActivity) this.getContext();
 		if (da != null) {
-			da.updatePageCounter("(" + (this.pageNumber * pageSize + 1) + "-" + len + ") of " + this.books.size());
+			int itemsOnPage = this.pageNumber * pageSize + 1;
+			if (len == 0) {
+				itemsOnPage = 0;
+			}
+
+			da.updatePageCounter("(" + itemsOnPage + "-" + len + ") of "
+					+ this.books.size());
 		}
 	}
 
@@ -261,6 +267,19 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public void onLongPress(MotionEvent e) {
+		DownloadableBook selectedBook;
+		if (e.getY() < this.width / 3) {
+			selectedBook = this.books.get(this.pageNumber * pageSize);
+		} else if (e.getY() < this.width / 3 * 2) {
+			selectedBook = this.books.get(this.pageNumber * pageSize + 1);
+		} else {
+			selectedBook = this.books.get(this.pageNumber * pageSize + 2);
+		}
+
+		if (selectedBook != null) {
+			((DownloadActivity) this.getContext())
+					.onBookSelection(selectedBook);
+		}
 	}
 
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,

@@ -1,6 +1,7 @@
 package com.example.read0r.Views;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.read0r.Activities.ReadSelectActivity;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
@@ -25,7 +26,7 @@ import android.view.ScaleGestureDetector.OnScaleGestureListener;
 public class ReadableBooksWidget extends View implements OnGestureListener,
 		OnScaleGestureListener {
 	private ILocalDataHandler localDataHandler;
-	private ArrayList<ReadableBook> books;
+	private List<ReadableBook> books;
 	private ReadableBook currentBook;
 	private int currentBookIndex;
 

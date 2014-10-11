@@ -42,15 +42,14 @@
             android:text="@string/FilterBtn" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/filter_listView1"
+    <LinearLayout
+        android:id="@+id/filter_categoriesList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/filter_linearLayout1"
         android:layout_alignLeft="@+id/filter_linearLayout1"
         android:layout_below="@+id/filter_textView1"
-        android:layout_marginTop="28dp" >
-
-    </ListView>
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </RelativeLayout>

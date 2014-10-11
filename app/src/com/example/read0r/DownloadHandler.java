@@ -104,7 +104,7 @@ public class DownloadHandler implements IDownloadHandler {
 				if (connection != null)
 					connection.disconnect();
 			}
-			context.onBookDownloaded();
+			context.onBookDownloaded(bookToDownload);
 			return null;
 		}
 	}
