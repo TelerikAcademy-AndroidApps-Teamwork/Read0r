@@ -14,7 +14,15 @@ import com.example.read0r.Views.DownloadableBooksWidget;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -30,7 +38,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DownloadActivity extends ActionBarActivity{
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+public class DownloadActivity extends ActionBarActivity {
 
 	private Intent downloadFilterIntent;
 	private int theme;
@@ -60,7 +69,8 @@ public class DownloadActivity extends ActionBarActivity{
 
 		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
 		this.filterBtn = (Button) this.findViewById(R.id.download_filterButton);
-		this.pageCounter = (TextView) this.findViewById(R.id.download_pageTrackerTextView);
+		this.pageCounter = (TextView) this
+				.findViewById(R.id.download_pageTrackerTextView);
 		this.booksWidget = (DownloadableBooksWidget) this
 				.findViewById(R.id.download_booksWidget);
 
@@ -136,13 +146,21 @@ public class DownloadActivity extends ActionBarActivity{
 	public void updatePageCounter(String text) {
 		this.pageCounter.setText(text);
 	}
-	
+
+	public void onBookSelection(DownloadableBook book) {
+		onBookDownloaded(book);
+		// TODO : Prompt Yes/No
+		//this.downloadHandler.downloadBook(this, book);
+	}
+
 	public void goBack() {
 		this.finish();
 	}
 
 	public void goToDownloadFilter() {
 		this.downloadFilterIntent.putExtra("filters", this.filters);
+		this.downloadFilterIntent.putExtra("categories",
+				this.distantDataHandler.getCategories());
 		this.startActivityForResult(this.downloadFilterIntent, 1);
 	}
 
@@ -156,11 +174,23 @@ public class DownloadActivity extends ActionBarActivity{
 		this.updateContent();
 	}
 
-	public void onBookDownloaded() {
-		Toast toast = new Toast(this);
-		toast.setText("Book Downloaded");
-		toast.show();
+	@SuppressLint("NewApi")
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void onBookDownloaded(DownloadableBook book) {
+
+		Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.attention);
+
+		Notification.Builder builder = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.attention)
+				.setLargeIcon(Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
+				.setContentTitle("Read0r book downloaded")
+				.setContentText("'" + book.title + "' by " + book.author);
+
+		Notification notification = builder.build();
+
+		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+				.notify(R.id.finishedDownloadNotifivation_id, notification);
 	}
 
-	
 }

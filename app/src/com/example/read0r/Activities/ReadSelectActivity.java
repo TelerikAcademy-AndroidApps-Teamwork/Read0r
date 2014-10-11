@@ -73,7 +73,9 @@ public class ReadSelectActivity extends ActionBarActivity implements OnClickList
 	public void goToRead() {
 		ReadableBooksWidget v = (ReadableBooksWidget)this.findViewById(R.id.readableBooksWidget1);
 		this.currentBook = v.getCurrentBook();
-		this.readIntent.putExtra("bookId", this.currentBook.id);
+
+		this.readIntent.putExtra("book_id", this.currentBook.id);
+		
 		this.startActivity(this.readIntent);
 	}
 

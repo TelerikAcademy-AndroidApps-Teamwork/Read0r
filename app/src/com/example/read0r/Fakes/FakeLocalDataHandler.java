@@ -29,6 +29,9 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 				+ "/read0r/hypno.read0r", "Hallo trainer", "???", 1, "fiction",
 				0));
 
+		for (int i = 0; i < this.books.size(); i++) {
+			this.books.get(i).id = i;
+		}
 	}
 
 	public ReadableBook getBookById(int id) {

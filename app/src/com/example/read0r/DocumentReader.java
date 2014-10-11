@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Environment;
 import android.util.Log;
 
@@ -36,16 +38,18 @@ public class DocumentReader implements IDocumentReader {
 		this.portionSize = portionSize;
 	}
 
-	public String[] getNextWordPortion(int letterIndex) {
+	public List<String> getNextWordPortion(int letterIndex) {
 		ArrayList<String> result = new ArrayList<String>();
 		String textPartition;
+		
 		if (!this.isSDcardAvailable()) {
-			return null;
+			//return result;
 		}
+		
 		try {
 			if (this.raf == null) {
-				this.raf = new RandomAccessFile(new File(document.fileAddress),
-						"rw");
+				File f = new File(document.fileAddress);
+				this.raf = new RandomAccessFile(f, "rw");
 				this.document.length = (int) (raf.length() /2);
 			}
 			
@@ -71,7 +75,7 @@ public class DocumentReader implements IDocumentReader {
 			Log.e("DocumentReader.getNextWordPortion()", "Error", e);
 		}
 
-		return (String[]) result.toArray();
+		return result;
 	}
 
 	private boolean isSDcardAvailable() {
