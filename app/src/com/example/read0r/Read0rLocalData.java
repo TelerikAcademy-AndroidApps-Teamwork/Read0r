@@ -27,22 +27,23 @@ import com.example.read0r.Models.ReadableBook;
 
 public class Read0rLocalData implements ILocalDataHandler {
 
-	private final String LOG_TAG = getClass().getSimpleName();
+	//private final String LOG_TAG = getClass().getSimpleName();
 	private ConnectionSource connectionSource;
 	private Dao<ReadableBook, Integer> readleBooksDoa;
 
-	{
-		if (connectionSource == null) {
+	public Read0rLocalData() {
+		
+		if (this.connectionSource == null) {
 			try {
-				connectionSource =
+				this.connectionSource =
 						new JdbcConnectionSource(
-								"jdbc:h2:/data/data/com.example.helloandroidh2/databases/helloAndroidH2");
-				readleBooksDoa = DaoManager.createDao(connectionSource, ReadableBook.class);
+								"jdbc:h2:/data/data/com.example.read0r/databases/read0r");
+				this.readleBooksDoa = DaoManager.createDao(this.connectionSource, ReadableBook.class);
 			} catch (SQLException e) {
 				throw new RuntimeException("Problems initializing database objects", e);
 			}
 			try {
-				TableUtils.createTable(connectionSource, ReadableBook.class);
+				TableUtils.createTable(this.connectionSource, ReadableBook.class);
 			} catch (SQLException e) {
 				// ignored
 			}
@@ -55,7 +56,6 @@ public class Read0rLocalData implements ILocalDataHandler {
 		try {
 			results = readleBooksDoa.queryBuilder().where().eq("id", id).query();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 			return null;
@@ -69,7 +69,6 @@ public class Read0rLocalData implements ILocalDataHandler {
 		try {
 			allBooksList = readleBooksDoa.queryForAll();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 			return null;
@@ -83,7 +82,6 @@ public class Read0rLocalData implements ILocalDataHandler {
 		try {
 			readleBooksDoa.create(book);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}	
