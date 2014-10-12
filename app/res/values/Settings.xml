@@ -6,4 +6,5 @@
     
     <bool name="useFakeDistantData">true</bool>
     <bool name="useFakeLocalData">true</bool>
+    <bool name="useFakeDocReader">true</bool>
 </resources>

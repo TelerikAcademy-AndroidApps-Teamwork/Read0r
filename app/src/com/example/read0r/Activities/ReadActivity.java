@@ -2,29 +2,38 @@ package com.example.read0r.Activities;
 
 import com.example.read0r.DocumentReader;
 import com.example.read0r.R;
+import com.example.read0r.Fakes.FakeDocumentReader;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
+import com.example.read0r.Interfaces.IDocumentReader;
 import com.example.read0r.Interfaces.ILocalDataHandler;
 import com.example.read0r.Models.ReadableBook;
-import com.example.read0r.R.id;
-import com.example.read0r.R.integer;
-import com.example.read0r.R.layout;
-import com.example.read0r.R.menu;
+import com.example.read0r.Services.Read0rQueueHandler;
 import com.example.read0r.Read0rLocalData;
 import com.example.read0r.Read0rWord;
 import com.example.read0r.Read0rQueue;
-import com.example.read0r.Read0rQueueHandler;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ReadActivity extends ActionBarActivity implements OnClickListener {
+public class ReadActivity extends ActionBarActivity implements
+		OnGestureListener, OnScaleGestureListener {
+
+	private GestureDetector guestureDetector;
+	private ScaleGestureDetector scaleDetector;
 
 	private int theme;
 	private int fontSize;
@@ -35,6 +44,13 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 	private Button stopBtn;
 	private Button pauseBtn;
 	private ILocalDataHandler localDataHandler;
+	private TextView wordView;
+	private TextView progressView;
+	private View background;
+
+	private double delayMultiplicator = 1;
+	private double minFontSize = 12;
+	private int maxFontSize = 50;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +61,66 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 
 		boolean localDataIsFake = this.getResources().getBoolean(
 				R.bool.useFakeLocalData);
+
 		if (localDataIsFake) {
-			this.localDataHandler = new Read0rLocalData();
-		} else {
 			this.localDataHandler = new FakeLocalDataHandler();
+		} else {
+			this.localDataHandler = new Read0rLocalData();
 		}
 
 		ReadableBook document = this.localDataHandler.getBookById(bookId);
 
+		this.guestureDetector = new GestureDetector(this, this);
+		this.scaleDetector = new ScaleGestureDetector(this, this);
+
 		this.stopBtn = (Button) this.findViewById(R.id.read_stopButton);
 		this.pauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
+		this.wordView = (TextView) this.findViewById(R.id.read_word);
+		this.progressView = (TextView) this
+				.findViewById(R.id.read_progressView);
+		this.background = this.findViewById(R.id.read_background);
 
-		this.stopBtn.setOnClickListener(this);
-		this.pauseBtn.setOnClickListener(this);
+		this.updateFontSize();
+
+		this.stopBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				stopReading();
+			}
+		});
+		this.pauseBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pauseReading();
+			}
+		});
+
+		this.background.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				boolean simpleGuestureHandled = guestureDetector
+						.onTouchEvent(event);
+				boolean scaleGuestureHandled = scaleDetector
+						.onTouchEvent(event);
+				return simpleGuestureHandled || scaleGuestureHandled;
+			}
+		});
 
 		Read0rQueue queue = new Read0rQueue();
-		DocumentReader reader = new DocumentReader(document);
+		IDocumentReader reader;
+		boolean docReaderIsFake = this.getResources().getBoolean(
+				R.bool.useFakeDocReader);
+
+		if (docReaderIsFake) {
+			reader = new FakeDocumentReader();
+		} else {
+			reader = new DocumentReader(document, this);
+		}
 
 		this.queueHandler = new Read0rQueueHandler(queue, reader);
+		this.queueHandler.onCreate();
+		this.queueHandler
+				.onStart(new Intent(this, Read0rQueueHandler.class), 1);
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
 		this.fontSize = this.getResources().getInteger(R.integer.fontSize);
@@ -70,6 +128,14 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 				R.integer.speedPercent);
 
 		this.applyTheme();
+
+		this.paused = true;
+		pauseBtn.setText("Start");
+		// setUpdateTimeout(2000);
+	}
+
+	private void updateFontSize() {
+		this.wordView.setTextSize(this.fontSize);
 	}
 
 	private void applyTheme() {
@@ -102,15 +168,28 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 				return;
 			} else {
 				this.currentWord = this.queueHandler.getNextWord();
+				this.wordView.setText(this.currentWord.getWord());
+				this.progressView.setText(this.queueHandler.getProgress());
 			}
 
 			// set timeout
-			new android.os.Handler().postDelayed(new Runnable() {
-				public void run() {
-					updateWord();
-				}
-			}, this.currentWord.getMilliSeconds());
+			setUpdateTimeout(this.calculateDelay());
 		}
+	}
+
+	private void setUpdateTimeout(long delay) {
+		new android.os.Handler().postDelayed(new Runnable() {
+			public void run() {
+				updateWord();
+			}
+		}, delay);
+	}
+
+	private long calculateDelay() {
+		long delay = this.currentWord.getMilliSeconds();
+		delay *= this.delayMultiplicator;
+		delay = delay * this.speedPercent / 100;
+		return delay;
 	}
 
 	private void onDocumentOver() {
@@ -139,11 +218,60 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 		this.finish();
 	}
 
-	public void onClick(View v) {
-		if (v.getId() == R.id.read_stopButton) {
-			stopReading();
-		} else if (v.getId() == R.id.read_pauseButton) {
-			pauseReading();
+	@Override
+	public boolean onScale(ScaleGestureDetector detector) {
+		this.fontSize *= (detector.getScaleFactor()/2);
+
+        // Don't let the object get too small or too large.
+		this.fontSize = (int) Math.max(this.minFontSize, Math.min(this.fontSize, this.maxFontSize));
+
+		return true;
+	}
+
+	@Override
+	public boolean onScaleBegin(ScaleGestureDetector detector) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onScaleEnd(ScaleGestureDetector detector) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		this.pauseReading();
+		this.delayMultiplicator = 1;
+		return false;
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		this.delayMultiplicator = 0.5;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		if (velocityX < 0) {
+			this.queueHandler.goBack();
 		}
+		return true;
 	}
 }

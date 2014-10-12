@@ -77,14 +77,15 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 
-		boolean localDataIsFake = this.getResources().getBoolean(R.bool.useFakeLocalData);
+		boolean localDataIsFake = this.getResources().getBoolean(
+				R.bool.useFakeLocalData);
 
 		if (localDataIsFake) {
-			this.localDataHandler = new Read0rLocalData();
-		} else {
 			this.localDataHandler = new FakeLocalDataHandler();
+		} else {
+			this.localDataHandler = new Read0rLocalData();
 		}
-		
+
 		this.books = this.localDataHandler.getBooks();
 		this.currentBook = this.books.size() > 0 ? this.books.get(0)
 				: new ReadableBook("", "", "", 1, "", 0);
@@ -139,7 +140,7 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 		if (this.offset != 0) {
 			canvas.translate(this.offset, 0);
 
-			int drawLen = this.width /3;
+			int drawLen = this.width / 3;
 			if (this.offset > drawLen) {
 				selectPrevElement();
 			} else if (-this.offset > drawLen) {

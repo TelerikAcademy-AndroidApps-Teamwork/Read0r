@@ -3,16 +3,22 @@ package com.example.read0r;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R.integer;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
 import com.example.read0r.Interfaces.IDocumentReader;
 import com.example.read0r.Models.ReadableBook;
+import com.telerik.everlive.sdk.core.facades.special.CreateFileFacade;
 
 public class DocumentReader implements IDocumentReader {
 
@@ -22,9 +28,12 @@ public class DocumentReader implements IDocumentReader {
 	private int lastPosition;
 	private boolean endReached;
 
-	private RandomAccessFile raf;
+	private Context context;
 
-	public DocumentReader(ReadableBook document) {
+	private boolean skipSDCardCheck = false;
+
+	public DocumentReader(ReadableBook document, Context context) {
+		this.context = context;
 		this.document = document;
 		this.lastPosition = 0;
 		this.portionSize = 2000;
@@ -39,57 +48,68 @@ public class DocumentReader implements IDocumentReader {
 		this.portionSize = portionSize;
 	}
 
+	private int addWordsOfStringToCollection(String textPartition,
+			List<String> result) {
+		int st = 0;
+		for (int end = 0; end < textPartition.length(); end++) {
+			if (textPartition.charAt(end) == ' ') {
+				result.add(textPartition.substring(st, end));
+				st = end + 1;
+			}
+		}
+		return st;
+	}
+
 	public List<String> getNextWordPortion(int letterIndex) {
 		ArrayList<String> result = new ArrayList<String>();
-		String textPartition;
 
 		if (!this.isSDcardAvailable()) {
-			Log.e("DocumentReader No SD card", "Error - no SD card is available");
+			Log.e("DocumentReader No SD card",
+					"Error - no SD card is available");
 		}
 
-		if (this.raf == null) {
+		FileInputStream fis = null;
+		String readString = null;
+		if (isSDcardAvailable() || this.skipSDCardCheck) {
 			try {
-				File f = new File(document.fileAddress);
-				this.raf = new RandomAccessFile(f, "r");
-				this.document.length = (int) (raf.length() / 2);
-			} catch (FileNotFoundException e) {
-				Log.e("DocumentReader FileNotFoundException", "Error", e);
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.e("DocumentReader IOException", "Error", e);
-				e.printStackTrace();
-			}
-		}
+				fis = context.openFileInput(this.document.fileAddress);
+				InputStreamReader isr = new InputStreamReader(fis);
 
-		try {
-			byte[] buffer = new byte[this.portionSize * 2];
-			raf.read(buffer, this.lastPosition, buffer.length);
+				// Skipping to the index...
+				isr.skip(letterIndex);
 
-			textPartition = new String(buffer);
+				// The actual reading
+				char[] inputBuffer = new char[this.portionSize];
+				int charsReaded = isr.read(inputBuffer);
+				String portion = new String(inputBuffer);
 
-			int st = 0;
-			for (int end = 0; end < textPartition.length(); end++) {
-				if (textPartition.charAt(end) == ' ') {
-					result.add(textPartition.substring(st, end));
-					st = end + 1;
+				// if end reached
+				if (charsReaded < this.portionSize) {
+					this.endReached = true;
+					portion += " ";
 				}
-			}
 
-			this.lastPosition = letterIndex + st;
-			if (raf.length() <= this.lastPosition * 2) { // if end reached
-				this.endReached = true;
-			}
+				int charsThatCount = addWordsOfStringToCollection(portion,
+						result);
 
-		} catch (IOException e) {
-			Log.e("DocumentReader.getNextWordPortion()", "Error", e);
+				// Saving progress
+				this.lastPosition = letterIndex + charsThatCount;
+
+				fis.close();
+				isr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				fis = null;
+			}
 		}
-
 		return result;
 	}
 
 	private boolean isSDcardAvailable() {
 		String state = Environment.getExternalStorageState();
-		if (state.equals(Environment.MEDIA_MOUNTED)) {
+		String expected = Environment.MEDIA_MOUNTED;
+		if (state.equals(expected)) {
 			return true;
 		}
 		return false;
@@ -97,5 +117,17 @@ public class DocumentReader implements IDocumentReader {
 
 	public boolean endReached() {
 		return this.endReached;
+	}
+
+	@Override
+	public long getDocLength() {
+		if (this.document.length == 0) {
+			File file = new File(this.document.fileAddress);
+			if (file.exists()) {
+				return file.length();
+			}
+			return 0;
+		}
+		return this.document.length;
 	}
 }
