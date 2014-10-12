@@ -3,4 +3,7 @@
     <integer name="speedPercent">100</integer>
     <integer name="theme">-1</integer>
     <integer name="fontSize">24</integer>
+    
+    <bool name="useFakeDistantData">true</bool>
+    <bool name="useFakeLocalData">true</bool>
 </resources>

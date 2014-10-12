@@ -14,48 +14,48 @@ public class FakeDistantDataHandler implements IDistantDataHandler {
 
 	public FakeDistantDataHandler() {
 
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+		this.books.add(new DownloadableBook( "hypno.read0r",
 				"Hallo, trainer", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
 				"fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+		this.books.add(new DownloadableBook("hypno.read0r",
 				"Hallo, trainer", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
 				"fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+		this.books.add(new DownloadableBook("hypno.read0r",
 				"Hallo, trainer", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
 				"fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
-		this.books.add(new DownloadableBook("http//fake.com", "hypno.read0r",
+		this.books.add(new DownloadableBook("hypno.read0r",
 				"Hallo, trainer", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"The_Show_Must_Go_On.read0r", "The Show Must Go On", "???", 1,
 				"fiction"));
-		this.books.add(new DownloadableBook("http//fake.com",
+		this.books.add(new DownloadableBook(
 				"About_speed_reading.read0r", "Fast Reading Description",
 				"???", 4, "science"));
 

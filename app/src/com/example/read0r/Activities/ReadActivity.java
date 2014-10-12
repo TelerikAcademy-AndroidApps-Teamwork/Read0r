@@ -3,11 +3,13 @@ package com.example.read0r.Activities;
 import com.example.read0r.DocumentReader;
 import com.example.read0r.R;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
+import com.example.read0r.Interfaces.ILocalDataHandler;
 import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.R.id;
 import com.example.read0r.R.integer;
 import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
+import com.example.read0r.Read0rLocalData;
 import com.example.read0r.Read0rWord;
 import com.example.read0r.Read0rQueue;
 import com.example.read0r.Read0rQueueHandler;
@@ -32,25 +34,34 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 	private boolean paused;
 	private Button stopBtn;
 	private Button pauseBtn;
+	private ILocalDataHandler localDataHandler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read);
 
-		
 		int bookId = this.getIntent().getExtras().getInt("book_id");
-		ReadableBook document = new FakeLocalDataHandler().getBookById(bookId);
+
+		boolean localDataIsFake = this.getResources().getBoolean(
+				R.bool.useFakeLocalData);
+		if (localDataIsFake) {
+			this.localDataHandler = new Read0rLocalData();
+		} else {
+			this.localDataHandler = new FakeLocalDataHandler();
+		}
+
+		ReadableBook document = this.localDataHandler.getBookById(bookId);
 
 		this.stopBtn = (Button) this.findViewById(R.id.read_stopButton);
 		this.pauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
 
 		this.stopBtn.setOnClickListener(this);
 		this.pauseBtn.setOnClickListener(this);
-		
+
 		Read0rQueue queue = new Read0rQueue();
 		DocumentReader reader = new DocumentReader(document);
-		
+
 		this.queueHandler = new Read0rQueueHandler(queue, reader);
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
@@ -58,7 +69,6 @@ public class ReadActivity extends ActionBarActivity implements OnClickListener {
 		this.speedPercent = this.getResources().getInteger(
 				R.integer.speedPercent);
 
-		
 		this.applyTheme();
 	}
 
