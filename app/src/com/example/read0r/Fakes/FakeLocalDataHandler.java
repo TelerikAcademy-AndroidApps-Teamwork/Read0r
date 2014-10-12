@@ -1,6 +1,7 @@
 package com.example.read0r.Fakes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.os.Environment;
 
@@ -9,7 +10,7 @@ import com.example.read0r.Models.ReadableBook;
 
 public class FakeLocalDataHandler implements ILocalDataHandler {
 
-	ArrayList<ReadableBook> books = new ArrayList<ReadableBook>();
+	List<ReadableBook> books = new ArrayList<ReadableBook>();
 
 	public FakeLocalDataHandler() {
 		this.books.add(new ReadableBook(Environment
@@ -42,7 +43,7 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 		}
 	}
 
-	public ArrayList<ReadableBook> getBooks() {
+	public List<ReadableBook> getBooks() {
 		return this.books;
 	}
 

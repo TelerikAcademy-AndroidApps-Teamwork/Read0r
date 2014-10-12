@@ -3,7 +3,11 @@ package com.example.read0r.Views;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.read0r.R;
+import com.example.read0r.Read0rDistantData;
+import com.example.read0r.Read0rLocalData;
 import com.example.read0r.Activities.ReadSelectActivity;
+import com.example.read0r.Fakes.FakeDistantDataHandler;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.ILocalDataHandler;
 import com.example.read0r.Models.DownloadableBook;
@@ -73,7 +77,14 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 
-		this.localDataHandler = new FakeLocalDataHandler();
+		boolean localDataIsFake = this.getResources().getBoolean(R.bool.useFakeLocalData);
+
+		if (localDataIsFake) {
+			this.localDataHandler = new Read0rLocalData();
+		} else {
+			this.localDataHandler = new FakeLocalDataHandler();
+		}
+		
 		this.books = this.localDataHandler.getBooks();
 		this.currentBook = this.books.size() > 0 ? this.books.get(0)
 				: new ReadableBook("", "", "", 1, "", 0);

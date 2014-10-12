@@ -1056,6 +1056,8 @@ containing a value of this type.
         public static final int abc_config_allowActionMenuItemTextWithIcon=0x7f070004;
         public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f070003;
         public static final int abc_split_action_bar_is_narrow=0x7f070002;
+        public static final int useFakeDistantData=0x7f070006;
+        public static final int useFakeLocalData=0x7f070007;
     }
     public static final class color {
         public static final int abc_search_url_text_holo=0x7f080003;
@@ -1306,7 +1308,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050027;
         public static final int action_menu_presenter=0x7f050028;
         public static final int action_mode_close_button=0x7f050035;
-        public static final int action_settings=0x7f050076;
+        public static final int action_settings=0x7f05007b;
         public static final int activity_chooser_view_content=0x7f050036;
         public static final int alignBounds=0x7f050002;
         public static final int alignMargins=0x7f050003;
@@ -1344,8 +1346,8 @@ containing a value of this type.
         public static final int filter_filterButton=0x7f050056;
         public static final int filter_linearLayout1=0x7f050054;
         public static final int filter_textView1=0x7f050053;
-        public static final int finishedBookNotifivation_id=0x7f050074;
-        public static final int finishedDownloadNotifivation_id=0x7f050075;
+        public static final int finishedBookNotifivation_id=0x7f050079;
+        public static final int finishedDownloadNotifivation_id=0x7f05007a;
         public static final int home=0x7f050025;
         public static final int homeAsUp=0x7f050017;
         public static final int horizontal=0x7f050000;
@@ -1353,6 +1355,7 @@ containing a value of this type.
         public static final int ifRoom=0x7f05001c;
         public static final int image=0x7f050038;
         public static final int left=0x7f050006;
+        public static final int linearLayout1=0x7f050076;
         public static final int listMode=0x7f050013;
         public static final int list_item=0x7f05003a;
         public static final int main_downloadButton=0x7f05005b;
@@ -1367,6 +1370,9 @@ containing a value of this type.
         public static final int normal=0x7f050012;
         public static final int progress_circular=0x7f050029;
         public static final int progress_horizontal=0x7f05002a;
+        public static final int prompt_noBtn=0x7f050078;
+        public static final int prompt_question=0x7f050075;
+        public static final int prompt_yesBtn=0x7f050077;
         public static final int radio=0x7f050040;
         public static final int read_pauseButton=0x7f050060;
         public static final int read_progressView=0x7f050061;
@@ -1407,6 +1413,7 @@ containing a value of this type.
         public static final int start=0x7f050010;
         public static final int submit_area=0x7f05004a;
         public static final int tabMode=0x7f050014;
+        public static final int textView1=0x7f050074;
         public static final int title=0x7f05003c;
         public static final int top=0x7f050004;
         public static final int top_action_bar=0x7f050031;
@@ -1475,8 +1482,9 @@ containing a value of this type.
         public static final int activity_read_select=0x7f03001c;
         public static final int activity_settings=0x7f03001d;
         public static final int downloadable_book_widget=0x7f03001e;
-        public static final int ids=0x7f03001f;
-        public static final int support_simple_spinner_dropdown_item=0x7f030020;
+        public static final int fragment_download_prompt=0x7f03001f;
+        public static final int ids=0x7f030020;
+        public static final int support_simple_spinner_dropdown_item=0x7f030021;
     }
     public static final class menu {
         public static final int main_menu=0x7f0c0000;

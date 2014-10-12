@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -16,18 +17,20 @@ import com.example.read0r.Activities.DownloadActivity;
 import com.example.read0r.Interfaces.IDownloadHandler;
 import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
+import com.telerik.everlive.sdk.core.EverliveApp;
 
 public class DownloadHandler implements IDownloadHandler {
 
 	public ReadableBook downloadBook(DownloadActivity context,
-			DownloadableBook bookToDownload) {
+			EverliveApp everlive, DownloadableBook bookToDownload) {
 
-		DownloadTask task = new DownloadTask(context, bookToDownload);
+		DownloadTask task = new DownloadTask(context, everlive, bookToDownload);
 		task.downloadTheBook();
 
-		return new ReadableBook(Environment.getExternalStorageDirectory().getPath() + bookToDownload.fileName,
-				bookToDownload.title, bookToDownload.author,
-				bookToDownload.pages, bookToDownload.category, 0);
+		return new ReadableBook(Environment.getExternalStorageDirectory()
+				.getPath() + bookToDownload.fileName, bookToDownload.title,
+				bookToDownload.author, (int) bookToDownload.pages.intValue(),
+				bookToDownload.category, 0);
 	}
 
 	private class DownloadTask extends AsyncTask<String, Integer, String> {
@@ -35,15 +38,25 @@ public class DownloadHandler implements IDownloadHandler {
 		private DownloadActivity context;
 		private PowerManager.WakeLock mWakeLock;
 		private DownloadableBook bookToDownload;
+		private EverliveApp everlive;
 
-		public DownloadTask(DownloadActivity context,
+		public DownloadTask(DownloadActivity context, EverliveApp everlive,
 				DownloadableBook bookToDownload) {
 			this.context = context;
+			this.everlive = everlive;
 			this.bookToDownload = bookToDownload;
 		}
 
+		public String getDownloadLink(UUID fileId) {
+			//return this.everlive.workWith().files().getFileDownloadUrl(fileId);
+			// TODO - Fix this shit!
+			
+			return "";
+		}
+
 		public String downloadTheBook() {
-			return this.doInBackground(this.bookToDownload.downloadAddress);
+			return this.doInBackground(this
+					.getDownloadLink(this.bookToDownload.Book));
 		}
 
 		@Override
@@ -70,7 +83,9 @@ public class DownloadHandler implements IDownloadHandler {
 
 				// download the file
 				input = connection.getInputStream();
-				output = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/read0r/"
+				output = new FileOutputStream(Environment
+						.getExternalStorageDirectory().getPath()
+						+ "/read0r/"
 						+ this.bookToDownload.fileName);
 
 				byte data[] = new byte[4096];

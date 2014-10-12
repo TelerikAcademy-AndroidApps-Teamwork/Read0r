@@ -62,7 +62,7 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		this.setBooks(new ArrayList<DownloadableBook>());
-		this.getBooks().add(new DownloadableBook("", "", "", "", 1, ""));
+		this.getBooks().add(new DownloadableBook("", "", "", 1, ""));
 
 		this.ownedBookPaint = new Paint();
 		this.ownedBookPaint.setColor(Color.LTGRAY);

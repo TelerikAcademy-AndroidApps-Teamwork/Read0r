@@ -1,14 +1,21 @@
 package com.example.read0r.Models;
 
-public class DownloadableBook {
-	public DownloadableBook() {
+import java.util.UUID;
 
+import com.telerik.everlive.sdk.core.model.base.DataItem;
+import com.telerik.everlive.sdk.core.serialization.ServerIgnore;
+import com.telerik.everlive.sdk.core.serialization.ServerProperty;
+import com.telerik.everlive.sdk.core.serialization.ServerType;
+
+@ServerType("DownloadableBooks")
+public class DownloadableBook extends DataItem {
+	public DownloadableBook() {
+		this("", "", "", 0, "");
 	}
 
-	public DownloadableBook(String downloadAddress, String fileName,
-			String title, String author, int pages, String category) {
+	public DownloadableBook(String fileName,
+		String title, String author, Number pages, String category) {
 
-		this.downloadAddress = downloadAddress;
 		this.fileName = fileName;
 
 		this.title = title;
@@ -18,14 +25,25 @@ public class DownloadableBook {
 
 		this.isOwned = false;
 	}
-
-	public String downloadAddress;
+	
+	@ServerProperty("Book")
+    public UUID Book;
+	
+	@ServerProperty("fileName")
 	public String fileName;
-
+	
+	@ServerProperty("title")
 	public String title;
+	
+	@ServerProperty("author")
 	public String author;
-	public int pages;
+	
+	@ServerProperty("pages")
+	public Number pages;
+	
+	@ServerProperty("category")
 	public String category;
 
+	@ServerIgnore
 	public boolean isOwned;
 }

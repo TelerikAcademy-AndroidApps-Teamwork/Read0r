@@ -1,12 +1,16 @@
 package com.example.read0r.Activities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.read0r.DownloadHandler;
 import com.example.read0r.R;
+import com.example.read0r.Read0rDistantData;
+import com.example.read0r.Read0rLocalData;
 import com.example.read0r.Fakes.FakeDistantDataHandler;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.IDistantDataHandler;
+import com.example.read0r.Interfaces.ILocalDataHandler;
 import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.Views.DownloadableBooksWidget;
@@ -25,16 +29,21 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,12 +55,13 @@ public class DownloadActivity extends ActionBarActivity {
 	private IDistantDataHandler distantDataHandler;
 	private ArrayList<String> filters;
 	private ArrayList<DownloadableBook> content;
-	private FakeLocalDataHandler localDataHandler;
+	private ILocalDataHandler localDataHandler;
 	private DownloadHandler downloadHandler;
 	private Button backBtn;
 	private Button filterBtn;
 	private DownloadableBooksWidget booksWidget;
 	private TextView pageCounter;
+	private DownloadableBook bookToDownload;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +72,22 @@ public class DownloadActivity extends ActionBarActivity {
 				DownloadFilterActivity.class);
 
 		this.theme = this.getResources().getInteger(R.integer.theme);
+		boolean distantDataIsFake = this.getResources().getBoolean(R.bool.useFakeDistantData);
+		boolean localDataIsFake = this.getResources().getBoolean(R.bool.useFakeLocalData);
 
-		this.distantDataHandler = new FakeDistantDataHandler();
-		this.localDataHandler = new FakeLocalDataHandler();
+		if (distantDataIsFake) {
+			this.distantDataHandler = new FakeDistantDataHandler();
+		} else {
+			this.distantDataHandler = new Read0rDistantData();
+		}
+		
+		if (localDataIsFake) {
+			this.localDataHandler = new Read0rLocalData();
+		} else {
+			this.localDataHandler = new FakeLocalDataHandler();
+		}
+		
+		
 		this.downloadHandler = new DownloadHandler();
 
 		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
@@ -106,7 +129,7 @@ public class DownloadActivity extends ActionBarActivity {
 
 	private void updateContent() {
 		this.content = this.distantDataHandler.getFilteredBooks(this.filters);
-		ArrayList<ReadableBook> ownedBooks = this.localDataHandler.getBooks();
+		List<ReadableBook> ownedBooks = this.localDataHandler.getBooks();
 
 		for (DownloadableBook book : this.content) {
 			for (ReadableBook ownedBook : ownedBooks) {
@@ -148,9 +171,61 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	public void onBookSelection(DownloadableBook book) {
-		onBookDownloaded(book);
-		// TODO : Prompt Yes/No
-		//this.downloadHandler.downloadBook(this, book);
+		boolean downloadAccepted = false;
+		this.bookToDownload = book;
+		showDownloadPrompt();
+	}
+
+	public void onPromptResponseSelected(boolean downloadAccepted) {
+		if (downloadAccepted) {
+			ReadableBook downloadedBook = this.downloadHandler
+					.downloadBook(this,
+							((Read0rDistantData) this.distantDataHandler)
+									.getEverlive(), this.bookToDownload);
+			this.localDataHandler.addBook(downloadedBook);
+			this.updateContent();
+			onBookDownloaded(this.bookToDownload);
+		}
+	}
+
+	private void showDownloadPrompt() {
+		try {
+			LayoutInflater inflater = (LayoutInflater) this
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			ViewGroup layout = (ViewGroup) inflater.inflate(
+					R.layout.fragment_download_prompt,
+					(ViewGroup) findViewById(R.id.download_textView1));
+
+			((TextView) layout.getChildAt(1))
+					.setText("Do you want to download the book '" + this.bookToDownload.title
+							+ "'");
+
+			PopupWindow downloadPrompt = new PopupWindow(layout, 200, 200,
+					false);
+			downloadPrompt.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+			Button Ok = (Button) ((ViewGroup) layout.getChildAt(2))
+					.getChildAt(0);
+			Button Cancel = (Button) ((ViewGroup) layout.getChildAt(2))
+					.getChildAt(1);
+
+			Cancel.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onPromptResponseSelected(false);
+				}
+			});
+			Cancel.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onPromptResponseSelected(true);
+				}
+			});
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void goBack() {
@@ -164,16 +239,6 @@ public class DownloadActivity extends ActionBarActivity {
 		this.startActivityForResult(this.downloadFilterIntent, 1);
 	}
 
-	void downloadBook() {
-		DownloadableBook dummyBook_PlsReplaceMe = new DownloadableBook();
-		// TODO : Get the selected book, and replace the dummy one
-
-		ReadableBook downloadedBook = this.downloadHandler.downloadBook(this,
-				dummyBook_PlsReplaceMe);
-		this.localDataHandler.addBook(downloadedBook);
-		this.updateContent();
-	}
-
 	@SuppressLint("NewApi")
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void onBookDownloaded(DownloadableBook book) {
@@ -183,7 +248,8 @@ public class DownloadActivity extends ActionBarActivity {
 
 		Notification.Builder builder = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.attention)
-				.setLargeIcon(Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
+				.setLargeIcon(
+						Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
 				.setContentTitle("Read0r book downloaded")
 				.setContentText("'" + book.title + "' by " + book.author);
 

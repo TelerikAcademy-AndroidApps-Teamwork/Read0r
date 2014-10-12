@@ -2,6 +2,7 @@ package com.example.read0r;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -41,18 +42,26 @@ public class DocumentReader implements IDocumentReader {
 	public List<String> getNextWordPortion(int letterIndex) {
 		ArrayList<String> result = new ArrayList<String>();
 		String textPartition;
-		
+
 		if (!this.isSDcardAvailable()) {
-			//return result;
+			Log.e("DocumentReader No SD card", "Error - no SD card is available");
 		}
-		
-		try {
-			if (this.raf == null) {
+
+		if (this.raf == null) {
+			try {
 				File f = new File(document.fileAddress);
-				this.raf = new RandomAccessFile(f, "rw");
-				this.document.length = (int) (raf.length() /2);
+				this.raf = new RandomAccessFile(f, "r");
+				this.document.length = (int) (raf.length() / 2);
+			} catch (FileNotFoundException e) {
+				Log.e("DocumentReader FileNotFoundException", "Error", e);
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e("DocumentReader IOException", "Error", e);
+				e.printStackTrace();
 			}
-			
+		}
+
+		try {
 			byte[] buffer = new byte[this.portionSize * 2];
 			raf.read(buffer, this.lastPosition, buffer.length);
 
