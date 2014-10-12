@@ -3,11 +3,5 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="libs/AndroidSDK.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/h2-1.2.128.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/ormlite-core-4.41.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/ormlite-jdbc-4.41.jar"/>
-	<classpathentry kind="output" path="bin/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
