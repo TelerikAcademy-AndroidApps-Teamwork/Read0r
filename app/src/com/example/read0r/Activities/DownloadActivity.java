@@ -82,9 +82,9 @@ public class DownloadActivity extends ActionBarActivity {
 		}
 		
 		if (localDataIsFake) {
-			this.localDataHandler = new Read0rLocalData();
-		} else {
 			this.localDataHandler = new FakeLocalDataHandler();
+		} else {
+			this.localDataHandler = new Read0rLocalData();
 		}
 		
 		
@@ -171,7 +171,6 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	public void onBookSelection(DownloadableBook book) {
-		boolean downloadAccepted = false;
 		this.bookToDownload = book;
 		showDownloadPrompt();
 	}

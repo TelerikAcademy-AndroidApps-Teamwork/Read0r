@@ -1,15 +1,25 @@
-package com.example.read0r;
+package com.example.read0r.Services;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.R.integer;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.util.Log;
 
+import com.example.read0r.Read0rQueue;
+import com.example.read0r.Read0rWord;
 import com.example.read0r.Interfaces.IDocumentReader;
 import com.example.read0r.Interfaces.IRead0rQueue;
 
-public class Read0rQueueHandler {
+public class Read0rQueueHandler extends Service {
+	private static final String TAG = Read0rQueueHandler.class.getSimpleName();
+	private boolean isStarted = false;
+
 	private IRead0rQueue queue;
 	private IDocumentReader reader;
 	private int partitionSize;
@@ -78,4 +88,56 @@ public class Read0rQueueHandler {
 		}
 		this.currentIndex = reader.getCurrentPosition();
 	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Log.d(TAG, "onCreate");
+	}
+
+	@Override
+	public synchronized void onStart(Intent intent, int startId) {
+		// TODO Auto-generated method stub
+		super.onStart(intent, startId);
+		Log.d(TAG, "onStart");
+		isStarted = true;
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.d(TAG, "onStartCommand");
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.d(TAG, "onDestroy");
+		super.onDestroy();
+		this.reader = null;
+	}
+
+	public void goBack() {
+		this.currentIndex -= 100;
+		if (currentIndex < 0) {
+			currentIndex = 0;
+		}
+		this.queue = new Read0rQueue();
+		this.init();
+	}
+
+	public String getProgress() {
+		long docLen = this.reader.getDocLength();
+		if (docLen == 0) {
+			return "no progress";
+		}
+		int percent = (int) (this.reader.getCurrentPosition() * 100
+				/ docLen);
+		return percent + "% progress";
+	}
+
 }
