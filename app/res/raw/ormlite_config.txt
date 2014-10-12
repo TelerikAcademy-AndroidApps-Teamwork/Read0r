@@ -1,0 +1,35 @@
+#
+# generated on 2014/10/12 03:44:59
+#
+# --table-start--
+dataClass=com.example.read0r.Models.ReadableBook
+tableName=readablebook
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=fileAddress
+# --field-end--
+# --field-start--
+fieldName=title
+# --field-end--
+# --field-start--
+fieldName=author
+# --field-end--
+# --field-start--
+fieldName=pages
+# --field-end--
+# --field-start--
+fieldName=category
+# --field-end--
+# --field-start--
+fieldName=length
+# --field-end--
+# --field-start--
+fieldName=positionPointer
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
