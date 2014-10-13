@@ -44,10 +44,10 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 	}
 
 	public ReadableBook getBookById(int id) {
-		if (id < this.mBooks.size() && id > 0) {
+		if (0 <= id && id < this.mBooks.size()) {
 			return this.mBooks.get(id);
 		} else {
-			return null;
+			return this.mBooks.get(0);
 		}
 	}
 
@@ -57,6 +57,10 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 
 	public void addBook(ReadableBook book) {
 		this.mBooks.add(book);
+	}
+
+	@Override
+	public void updateBook(ReadableBook book) {
 	}
 
 }

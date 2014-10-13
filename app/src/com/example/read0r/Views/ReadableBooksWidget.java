@@ -1,6 +1,7 @@
 package com.example.read0r.Views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.example.read0r.R;
@@ -64,6 +65,8 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 
 	private int mOffset;
 	private int mCenterLineVertical;
+	private Date mDateOfLastTap;
+	private long mMillisecondsBetweenClicks = 500;
 
 	public ReadableBooksWidget(Context context) {
 		this(context, null, 0);
@@ -284,7 +287,15 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
+		if (this.mDateOfLastTap != null) {
+			long timeSpan = new Date().getTime() - mDateOfLastTap.getTime();
+			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks ) {
+				this.onLongPress(e);
+				this.mDateOfLastTap = null;
+				return true;
+			}
+		}
+		this.mDateOfLastTap = new Date();
 		return false;
 	}
 

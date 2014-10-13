@@ -6,11 +6,18 @@ public class Read0rWord {
 		this.mMilliSeconds = calcMilliSeconds();
 	}
 
+	private static char[] mSpecialChars = { '.', '!', '?', ',', ';', ':' };
 	private String mWord;
 	private int mMilliSeconds;
-	
+
 	protected int calcMilliSeconds() {
-		int result = 100 + this.getWord().length() * 20;
+		int result = 150 + this.getWord().length() * 50;
+		for (char ch : mSpecialChars) {
+			char lastCh = this.getWord().charAt(this.getWord().length() - 1);
+			if (ch == lastCh) {
+				result += 150;
+			}
+		}
 		return result;
 	}
 
@@ -26,7 +33,7 @@ public class Read0rWord {
 	public int getMilliSeconds() {
 		return mMilliSeconds;
 	}
-	
+
 	public void setMilliSeconds(int ms) {
 		this.mMilliSeconds = ms;
 	}

@@ -130,14 +130,14 @@ public class Read0rQueueHandler extends Service {
 		this.init();
 	}
 
-	public String getProgress() {
+	public int getProgress() {
 		long docLen = this.reader.getDocLength();
 		if (docLen == 0) {
-			return "no progress";
+			return 0;
 		}
 		int percent = (int) (this.reader.getCurrentPosition() * 100
 				/ docLen);
-		return percent + "% progress";
+		return percent;
 	}
 
 }

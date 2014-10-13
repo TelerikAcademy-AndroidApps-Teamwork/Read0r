@@ -1,6 +1,7 @@
 package com.example.read0r.Views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.example.read0r.Activities.DownloadActivity;
@@ -42,15 +43,17 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	private int mItemHeight;
 	private int mViewPortion;
 	private int mCountOfLines;
-	
+
 	private Path mTitlePath;
 	private GestureDetector mGuestureDetector;
 	private ScaleGestureDetector mScaleDetector;
-	
+
 	private Paint mOwnedBookPaint;
 	private Paint mNewBookPaint;
 	private Paint mTextPaint;
 	private Paint mSelectedBookPaint;
+	private Date mDateOfLastTap;
+	private long mMillisecondsBetweenClicks = 500;
 
 	public DownloadableBooksWidget(Context context) {
 		this(context, null);
@@ -91,13 +94,14 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 		super.onLayout(changed, left, top, right, bottom);
 
 		this.mViewPortion = this.mWidth / 10;
-		this.mItemHeight = Math.max(this.mHeight / 3, this.mWidth / 10 * 2);
+		this.mItemHeight = this.mHeight / 3;
 
 		if (changed || this.mInitialized) {
 			this.mInitialized = true;
 			this.mTitlePath = new Path();
 			this.mTitlePath.moveTo(mViewPortion, mViewPortion);
-			this.mTitlePath.lineTo(this.mWidth / 2, (float) (mViewPortion * 1.3));
+			this.mTitlePath.lineTo(this.mWidth / 2,
+					(float) (mViewPortion * 1.3));
 			this.mTitlePath.lineTo(this.mWidth, mViewPortion);
 		}
 	}
@@ -259,6 +263,15 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public boolean onSingleTapUp(MotionEvent e) {
+		if (this.mDateOfLastTap != null) {
+			long timeSpan = new Date().getTime() - mDateOfLastTap.getTime();
+			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks) {
+				this.onLongPress(e);
+				this.mDateOfLastTap = null;
+				return true;
+			}
+		}
+		this.mDateOfLastTap = new Date();
 		return false;
 	}
 
@@ -269,12 +282,12 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 
 	public void onLongPress(MotionEvent e) {
 		DownloadableBook selectedBook;
-		if (e.getY() < this.mWidth / 3) {
-			selectedBook = this.mBooks.get(this.mPageNumber * mPageSize);
-		} else if (e.getY() < this.mWidth / 3 * 2) {
-			selectedBook = this.mBooks.get(this.mPageNumber * mPageSize + 1);
+		if (e.getY() < this.mItemHeight) {
+			selectedBook = this.mCurentPage.get(0);
+		} else if (e.getY() < this.mItemHeight * 2) {
+			selectedBook = this.mCurentPage.get(1);
 		} else {
-			selectedBook = this.mBooks.get(this.mPageNumber * mPageSize + 2);
+			selectedBook = this.mCurentPage.get(2);
 		}
 
 		if (selectedBook != null) {
