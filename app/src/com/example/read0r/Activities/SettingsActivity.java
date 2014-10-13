@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 
 public class SettingsActivity extends ActionBarActivity implements
@@ -24,6 +25,10 @@ public class SettingsActivity extends ActionBarActivity implements
 	private RadioButton darkThemeRadio;
 	private Button backBtn;
 	private Button saveBtn;
+	private int fontSize;
+	private int speedPercent;
+	private EditText fontInput;
+	private EditText speedInput;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +43,42 @@ public class SettingsActivity extends ActionBarActivity implements
 		this.darkThemeRadio = (RadioButton) this
 				.findViewById(R.id.settings_darkRadio);
 
+		this.fontInput = (EditText) this.findViewById(R.id.settings_fontInput);
+		this.speedInput = (EditText) this
+				.findViewById(R.id.settings_speedInput);
+
 		this.backBtn.setOnClickListener(this);
 		this.saveBtn.setOnClickListener(this);
 		this.lightThemeRadio.setOnClickListener(this);
 		this.darkThemeRadio.setOnClickListener(this);
-		
-		this.theme = this.getResources().getInteger(R.integer.theme);
 
+		loadSettings();
 		this.applyTheme();
+		this.displaySettings();
+	}
+
+	private void loadSettings() {
+		this.theme = this.getResources().getInteger(R.integer.theme);
+		this.fontSize = this.getResources().getInteger(R.integer.fontSize);
+		this.speedPercent = this.getResources().getInteger(
+				R.integer.speedPercent);
 	}
 
 	private void applyTheme() {
 		// TODO : Apply the theme
+	}
+
+	private void displaySettings() {
+		this.fontInput.setText(this.fontSize);
+		this.speedInput.setText(this.speedPercent);
+
+		if (this.theme == Color.WHITE) {
+			this.darkThemeRadio.setChecked(false);
+			this.lightThemeRadio.setChecked(true);
+		} else if (this.theme == Color.BLACK) {
+			this.lightThemeRadio.setChecked(false);
+			this.darkThemeRadio.setChecked(true);
+		}
 	}
 
 	@Override
@@ -76,7 +105,7 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	public void saveSettings() {
-		// TODO : Save the settings
+		this.getResources();
 		this.goBack();
 	}
 

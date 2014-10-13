@@ -19,7 +19,7 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 				"Fast Reading Description", "???", 4, "science", 0));
 		this.books.add(new ReadableBook(Environment
 				.getExternalStorageDirectory().getPath()
-				+ "/read0r/hypno.read0r", "Hallo trainer", "???", 1, "fiction",
+				+ "/read0r/hypno.read0r", "Hello trainer", "???", 1, "fiction",
 				0));
 		this.books.add(new ReadableBook(Environment
 				.getExternalStorageDirectory().getPath()
@@ -27,7 +27,15 @@ public class FakeLocalDataHandler implements ILocalDataHandler {
 				"Fast Reading Description", "???", 4, "science", 0));
 		this.books.add(new ReadableBook(Environment
 				.getExternalStorageDirectory().getPath()
-				+ "/read0r/hypno.read0r", "Hallo trainer", "???", 1, "fiction",
+				+ "/read0r/hypno.read0r", "Hello trainer", "???", 1, "fiction",
+				0));
+		this.books.add(new ReadableBook(Environment
+				.getExternalStorageDirectory().getPath()
+				+ "/read0r/About_speed_reading.read0r",
+				"Fast Reading Description", "???", 4, "science", 0));
+		this.books.add(new ReadableBook(Environment
+				.getExternalStorageDirectory().getPath()
+				+ "/read0r/hypno.read0r", "Hello trainer", "???", 1, "fiction",
 				0));
 
 		for (int i = 0; i < this.books.size(); i++) {

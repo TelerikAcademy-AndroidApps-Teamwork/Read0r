@@ -29,6 +29,7 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 	private Button filterBtn;
 	private ArrayList<String> categories;
 	private LinearLayout categoriesList;
+	private ArrayList<String> originFilters;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +44,16 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 		this.backBtn = (Button) this.findViewById(R.id.filter_backButton);
 		this.filterBtn = (Button) this.findViewById(R.id.filter_filterButton);
 
-		this.categoriesList = (LinearLayout) this.findViewById(R.id.filter_categoriesList);
-		
+		this.categoriesList = (LinearLayout) this
+				.findViewById(R.id.filter_categoriesList);
+
 		this.backBtn.setOnClickListener(this);
 		this.filterBtn.setOnClickListener(this);
+
+		if (this.getIntent().hasExtra("filters")) {
+			this.originFilters = (ArrayList<String>) this.getIntent()
+					.getExtras().get("filters");
+		}
 
 		this.applyTheme();
 		this.initFilters();
@@ -58,11 +65,9 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 	}
 
 	private void initFilters() {
-		if (this.getIntent().hasExtra("filters")) {
-			this.filters = (ArrayList<String>) this.getIntent().getExtras()
-					.get("filters");
-		} else {
-			this.filters = new ArrayList<String>();
+		this.filters = new ArrayList<String>();
+		for (String string : originFilters) {
+			this.filters.add(string);
 		}
 
 		if (this.getIntent().hasExtra("categories")) {
@@ -75,7 +80,7 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 
 	private void drawFilters() {
 		this.categoriesList.removeAllViews();
-		
+
 		for (int i = 0; i < this.categories.size(); i++) {
 			String cat = this.categories.get(i);
 			CheckBox cb = new CheckBox(this);
@@ -85,18 +90,19 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 					cb.setChecked(true);
 				}
 			}
-			
+
 			cb.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					CheckBox chb = (CheckBox)v;
+					CheckBox chb = (CheckBox) v;
 					if (chb.isChecked()) {
 						filters.add(chb.getText().toString());
 					} else {
-						filters.remove(filters.indexOf(chb.getText().toString()));
+						filters.remove(filters
+								.indexOf(chb.getText().toString()));
 					}
 				}
 			});
-			
+
 			this.categoriesList.addView(cb);
 		}
 	}

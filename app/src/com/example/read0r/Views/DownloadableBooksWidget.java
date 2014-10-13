@@ -33,22 +33,25 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	private int pageNumber;
 	private int pageSize = 3;
 	private boolean pageChanged = true;
+	private boolean initialized = false;
 
 	private int width;
 	private int height;
+
+	private int selectedIndex;
+	private int itemHeight;
+	private int minItemHeight;
+	private int viewPortion;
+	private int countOfLines;
+	
+	private Path titlePath;
+	private GestureDetector guestureDetector;
+	private ScaleGestureDetector scaleDetector;
+	
 	private Paint ownedBookPaint;
 	private Paint newBookPaint;
 	private Paint textPaint;
-	private int viewPortion;
-	private Path titlePath;
-	private int countOfLines;
-	private boolean initialized = false;
-	private int selectedIndex;
-	private int itemHeight;
 	private Paint selectedBookPaint;
-	private int minItemHeight;
-	private GestureDetector guestureDetector;
-	private ScaleGestureDetector scaleDetector;
 
 	public DownloadableBooksWidget(Context context) {
 		this(context, null);
@@ -78,7 +81,6 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 
 		this.guestureDetector = new GestureDetector(this.getContext(), this);
 		this.scaleDetector = new ScaleGestureDetector(this.getContext(), this);
-
 	}
 
 	@Override

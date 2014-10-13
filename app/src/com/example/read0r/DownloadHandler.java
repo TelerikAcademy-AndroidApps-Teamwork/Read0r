@@ -22,9 +22,9 @@ import com.telerik.everlive.sdk.core.EverliveApp;
 public class DownloadHandler implements IDownloadHandler {
 
 	public ReadableBook downloadBook(DownloadActivity context,
-			EverliveApp everlive, DownloadableBook bookToDownload) {
+			String url, DownloadableBook bookToDownload) {
 
-		DownloadTask task = new DownloadTask(context, everlive, bookToDownload);
+		DownloadTask task = new DownloadTask(context, url, bookToDownload);
 		task.downloadTheBook();
 
 		return new ReadableBook(Environment.getExternalStorageDirectory()
@@ -38,25 +38,17 @@ public class DownloadHandler implements IDownloadHandler {
 		private DownloadActivity context;
 		private PowerManager.WakeLock mWakeLock;
 		private DownloadableBook bookToDownload;
-		private EverliveApp everlive;
+		private String url;
 
-		public DownloadTask(DownloadActivity context, EverliveApp everlive,
+		public DownloadTask(DownloadActivity context, String url,
 				DownloadableBook bookToDownload) {
 			this.context = context;
-			this.everlive = everlive;
 			this.bookToDownload = bookToDownload;
-		}
-
-		public String getDownloadLink(UUID fileId) {
-			//return this.everlive.workWith().files().getFileDownloadUrl(fileId);
-			// TODO - Fix this shit!
-			
-			return "";
+			this.url = url;
 		}
 
 		public String downloadTheBook() {
-			return this.doInBackground(this
-					.getDownloadLink(this.bookToDownload.Book));
+			return this.doInBackground(this.url);
 		}
 
 		@Override
