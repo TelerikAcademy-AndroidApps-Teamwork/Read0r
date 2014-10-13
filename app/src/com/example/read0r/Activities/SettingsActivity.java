@@ -20,37 +20,37 @@ import android.widget.RadioButton;
 public class SettingsActivity extends ActionBarActivity implements
 		OnClickListener {
 
-	private int theme;
-	private RadioButton lightThemeRadio;
-	private RadioButton darkThemeRadio;
-	private Button backBtn;
-	private Button saveBtn;
-	private int fontSize;
-	private int speedPercent;
-	private EditText fontInput;
-	private EditText speedInput;
+	private int mTheme;
+	private RadioButton mLightThemeRadio;
+	private RadioButton mDarkThemeRadio;
+	private Button mBackBtn;
+	private Button mSaveBtn;
+	private int mFontSize;
+	private int mSpeedPercent;
+	private EditText mFontInput;
+	private EditText mSpeedInput;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-		this.backBtn = (Button) this.findViewById(R.id.settings_backButton);
-		this.saveBtn = (Button) this.findViewById(R.id.settings_saveButton);
+		this.mBackBtn = (Button) this.findViewById(R.id.settings_backButton);
+		this.mSaveBtn = (Button) this.findViewById(R.id.settings_saveButton);
 
-		this.lightThemeRadio = (RadioButton) this
+		this.mLightThemeRadio = (RadioButton) this
 				.findViewById(R.id.settings_lightRadio);
-		this.darkThemeRadio = (RadioButton) this
+		this.mDarkThemeRadio = (RadioButton) this
 				.findViewById(R.id.settings_darkRadio);
 
-		this.fontInput = (EditText) this.findViewById(R.id.settings_fontInput);
-		this.speedInput = (EditText) this
+		this.mFontInput = (EditText) this.findViewById(R.id.settings_fontInput);
+		this.mSpeedInput = (EditText) this
 				.findViewById(R.id.settings_speedInput);
 
-		this.backBtn.setOnClickListener(this);
-		this.saveBtn.setOnClickListener(this);
-		this.lightThemeRadio.setOnClickListener(this);
-		this.darkThemeRadio.setOnClickListener(this);
+		this.mBackBtn.setOnClickListener(this);
+		this.mSaveBtn.setOnClickListener(this);
+		this.mLightThemeRadio.setOnClickListener(this);
+		this.mDarkThemeRadio.setOnClickListener(this);
 
 		loadSettings();
 		this.applyTheme();
@@ -58,9 +58,9 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	private void loadSettings() {
-		this.theme = this.getResources().getInteger(R.integer.theme);
-		this.fontSize = this.getResources().getInteger(R.integer.fontSize);
-		this.speedPercent = this.getResources().getInteger(
+		this.mTheme = this.getResources().getInteger(R.integer.theme);
+		this.mFontSize = this.getResources().getInteger(R.integer.fontSize);
+		this.mSpeedPercent = this.getResources().getInteger(
 				R.integer.speedPercent);
 	}
 
@@ -69,15 +69,15 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	private void displaySettings() {
-		this.fontInput.setText(this.fontSize);
-		this.speedInput.setText(this.speedPercent);
+		this.mFontInput.setText(this.mFontSize);
+		this.mSpeedInput.setText(this.mSpeedPercent);
 
-		if (this.theme == Color.WHITE) {
-			this.darkThemeRadio.setChecked(false);
-			this.lightThemeRadio.setChecked(true);
-		} else if (this.theme == Color.BLACK) {
-			this.lightThemeRadio.setChecked(false);
-			this.darkThemeRadio.setChecked(true);
+		if (this.mTheme == Color.WHITE) {
+			this.mDarkThemeRadio.setChecked(false);
+			this.mLightThemeRadio.setChecked(true);
+		} else if (this.mTheme == Color.BLACK) {
+			this.mLightThemeRadio.setChecked(false);
+			this.mDarkThemeRadio.setChecked(true);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	private void changeTheme(int color) {
-		this.theme = color;
+		this.mTheme = color;
 		this.applyTheme();
 	}
 

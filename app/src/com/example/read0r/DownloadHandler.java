@@ -35,20 +35,20 @@ public class DownloadHandler implements IDownloadHandler {
 
 	private class DownloadTask extends AsyncTask<String, Integer, String> {
 
-		private DownloadActivity context;
+		private DownloadActivity mContext;
 		private PowerManager.WakeLock mWakeLock;
-		private DownloadableBook bookToDownload;
-		private String url;
+		private DownloadableBook mBookToDownload;
+		private String mUrl;
 
 		public DownloadTask(DownloadActivity context, String url,
 				DownloadableBook bookToDownload) {
-			this.context = context;
-			this.bookToDownload = bookToDownload;
-			this.url = url;
+			this.mContext = context;
+			this.mBookToDownload = bookToDownload;
+			this.mUrl = url;
 		}
 
 		public String downloadTheBook() {
-			return this.doInBackground(this.url);
+			return this.doInBackground(this.mUrl);
 		}
 
 		@Override
@@ -78,7 +78,7 @@ public class DownloadHandler implements IDownloadHandler {
 				output = new FileOutputStream(Environment
 						.getExternalStorageDirectory().getPath()
 						+ "/read0r/"
-						+ this.bookToDownload.fileName);
+						+ this.mBookToDownload.fileName);
 
 				byte data[] = new byte[4096];
 				long total = 0;
@@ -111,7 +111,7 @@ public class DownloadHandler implements IDownloadHandler {
 				if (connection != null)
 					connection.disconnect();
 			}
-			context.onBookDownloaded(bookToDownload);
+			mContext.onBookDownloaded(mBookToDownload);
 			return null;
 		}
 	}

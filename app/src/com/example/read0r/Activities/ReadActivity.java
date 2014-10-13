@@ -35,22 +35,22 @@ public class ReadActivity extends ActionBarActivity implements
 	private GestureDetector guestureDetector;
 	private ScaleGestureDetector scaleDetector;
 
-	private int theme;
-	private int fontSize;
-	private int speedPercent;
-	private Read0rWord currentWord;
-	private Read0rQueueHandler queueHandler;
-	private boolean paused;
-	private Button stopBtn;
-	private Button pauseBtn;
-	private ILocalDataHandler localDataHandler;
-	private TextView wordView;
-	private TextView progressView;
-	private View background;
+	private int mTheme;
+	private int mFontSize;
+	private int mSpeedPercent;
+	private Read0rWord mCurrentWord;
+	private Read0rQueueHandler mQueueHandler;
+	private boolean mPaused;
+	private Button mStopBtn;
+	private Button mPauseBtn;
+	private ILocalDataHandler mLocalDataHandler;
+	private TextView mWordView;
+	private TextView mProgressView;
+	private View mBackground;
 
-	private double delayMultiplicator = 1;
-	private double minFontSize = 12;
-	private int maxFontSize = 50;
+	private double mDelayMultiplicator = 1;
+	private double mMinFontSize = 12;
+	private int mMaxFontSize = 50;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,39 +63,39 @@ public class ReadActivity extends ActionBarActivity implements
 				R.bool.useFakeLocalData);
 
 		if (localDataIsFake) {
-			this.localDataHandler = new FakeLocalDataHandler();
+			this.mLocalDataHandler = new FakeLocalDataHandler();
 		} else {
-			this.localDataHandler = new Read0rLocalData();
+			this.mLocalDataHandler = new Read0rLocalData();
 		}
 
-		ReadableBook document = this.localDataHandler.getBookById(bookId);
+		ReadableBook document = this.mLocalDataHandler.getBookById(bookId);
 
 		this.guestureDetector = new GestureDetector(this, this);
 		this.scaleDetector = new ScaleGestureDetector(this, this);
 
-		this.stopBtn = (Button) this.findViewById(R.id.read_stopButton);
-		this.pauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
-		this.wordView = (TextView) this.findViewById(R.id.read_word);
-		this.progressView = (TextView) this
+		this.mStopBtn = (Button) this.findViewById(R.id.read_stopButton);
+		this.mPauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
+		this.mWordView = (TextView) this.findViewById(R.id.read_word);
+		this.mProgressView = (TextView) this
 				.findViewById(R.id.read_progressView);
-		this.background = this.findViewById(R.id.read_background);
+		this.mBackground = this.findViewById(R.id.read_background);
 
 		this.updateFontSize();
 
-		this.stopBtn.setOnClickListener(new OnClickListener() {
+		this.mStopBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				stopReading();
 			}
 		});
-		this.pauseBtn.setOnClickListener(new OnClickListener() {
+		this.mPauseBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				pauseReading();
 			}
 		});
 
-		this.background.setOnTouchListener(new OnTouchListener() {
+		this.mBackground.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				boolean simpleGuestureHandled = guestureDetector
@@ -117,25 +117,25 @@ public class ReadActivity extends ActionBarActivity implements
 			reader = new DocumentReader(document, this);
 		}
 
-		this.queueHandler = new Read0rQueueHandler(queue, reader);
-		this.queueHandler.onCreate();
-		this.queueHandler
+		this.mQueueHandler = new Read0rQueueHandler(queue, reader);
+		this.mQueueHandler.onCreate();
+		this.mQueueHandler
 				.onStart(new Intent(this, Read0rQueueHandler.class), 1);
 
-		this.theme = this.getResources().getInteger(R.integer.theme);
-		this.fontSize = this.getResources().getInteger(R.integer.fontSize);
-		this.speedPercent = this.getResources().getInteger(
+		this.mTheme = this.getResources().getInteger(R.integer.theme);
+		this.mFontSize = this.getResources().getInteger(R.integer.fontSize);
+		this.mSpeedPercent = this.getResources().getInteger(
 				R.integer.speedPercent);
 
 		this.applyTheme();
 
-		this.paused = true;
-		pauseBtn.setText("Start");
+		this.mPaused = true;
+		mPauseBtn.setText("Start");
 		// setUpdateTimeout(2000);
 	}
 
 	private void updateFontSize() {
-		this.wordView.setTextSize(this.fontSize);
+		this.mWordView.setTextSize(this.mFontSize);
 	}
 
 	private void applyTheme() {
@@ -162,14 +162,14 @@ public class ReadActivity extends ActionBarActivity implements
 	}
 
 	void updateWord() {
-		if (!this.paused) {
-			if (this.queueHandler.isDocumentOver()) {
+		if (!this.mPaused) {
+			if (this.mQueueHandler.isDocumentOver()) {
 				this.onDocumentOver();
 				return;
 			} else {
-				this.currentWord = this.queueHandler.getNextWord();
-				this.wordView.setText(this.currentWord.getWord());
-				this.progressView.setText(this.queueHandler.getProgress());
+				this.mCurrentWord = this.mQueueHandler.getNextWord();
+				this.mWordView.setText(this.mCurrentWord.getWord());
+				this.mProgressView.setText(this.mQueueHandler.getProgress());
 			}
 
 			// set timeout
@@ -186,9 +186,9 @@ public class ReadActivity extends ActionBarActivity implements
 	}
 
 	private long calculateDelay() {
-		long delay = this.currentWord.getMilliSeconds();
-		delay *= this.delayMultiplicator;
-		delay = delay * this.speedPercent / 100;
+		long delay = this.mCurrentWord.getMilliSeconds();
+		delay *= this.mDelayMultiplicator;
+		delay = delay * this.mSpeedPercent / 100;
 		return delay;
 	}
 
@@ -199,18 +199,18 @@ public class ReadActivity extends ActionBarActivity implements
 	}
 
 	public void pauseReading() {
-		if (this.paused) {
-			pauseBtn.setText(this.getResources().getInteger(R.string.PauseBtn));
-			this.paused = false;
+		if (this.mPaused) {
+			mPauseBtn.setText(this.getResources().getInteger(R.string.PauseBtn));
+			this.mPaused = false;
 			updateWord();
 		} else {
-			pauseBtn.setText(this.getResources().getInteger(R.string.ResumeBtn));
-			this.paused = true;
+			mPauseBtn.setText(this.getResources().getInteger(R.string.ResumeBtn));
+			this.mPaused = true;
 		}
 	}
 
 	public void stopReading() {
-		this.paused = true;
+		this.mPaused = true;
 		this.goBack();
 	}
 
@@ -220,10 +220,10 @@ public class ReadActivity extends ActionBarActivity implements
 
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
-		this.fontSize *= (detector.getScaleFactor()/2);
+		this.mFontSize *= (detector.getScaleFactor()/2);
 
         // Don't let the object get too small or too large.
-		this.fontSize = (int) Math.max(this.minFontSize, Math.min(this.fontSize, this.maxFontSize));
+		this.mFontSize = (int) Math.max(this.mMinFontSize, Math.min(this.mFontSize, this.mMaxFontSize));
 
 		return true;
 	}
@@ -251,7 +251,7 @@ public class ReadActivity extends ActionBarActivity implements
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		this.pauseReading();
-		this.delayMultiplicator = 1;
+		this.mDelayMultiplicator = 1;
 		return false;
 	}
 
@@ -263,14 +263,14 @@ public class ReadActivity extends ActionBarActivity implements
 
 	@Override
 	public void onLongPress(MotionEvent e) {
-		this.delayMultiplicator = 0.5;
+		this.mDelayMultiplicator = 0.5;
 	}
 
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		if (velocityX < 0) {
-			this.queueHandler.goBack();
+			this.mQueueHandler.goBack();
 		}
 		return true;
 	}

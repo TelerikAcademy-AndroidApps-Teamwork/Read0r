@@ -10,46 +10,46 @@ import com.example.read0r.Models.ReadableBook;
 
 public class FakeDistantDataHandler implements IDistantDataHandler {
 
-	ArrayList<DownloadableBook> books = new ArrayList<DownloadableBook>();
+	ArrayList<DownloadableBook> mBooks = new ArrayList<DownloadableBook>();
 
 	public FakeDistantDataHandler() {
 
-		this.books.add(new DownloadableBook("about_speed_reading.read0r",
+		this.mBooks.add(new DownloadableBook("about_speed_reading.read0r",
 				"Fast Reading Description", "???", 4, "science"));
-		this.books.add(new DownloadableBook("hypno.read0r", "Hello trainer",
+		this.mBooks.add(new DownloadableBook("hypno.read0r", "Hello trainer",
 				"???", 1, "fiction"));
-		this.books.add(new DownloadableBook("the_show_must_go_on.read0r",
+		this.mBooks.add(new DownloadableBook("the_show_must_go_on.read0r",
 				"The Show Must Go On", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("are_you_the_killer.read0r",
+		this.mBooks.add(new DownloadableBook("are_you_the_killer.read0r",
 				"Are you the killer?", "???", 1, "thriller"));
-		this.books.add(new DownloadableBook("the_genious_inside_you.read0r",
+		this.mBooks.add(new DownloadableBook("the_genious_inside_you.read0r",
 				"The genious inside you", "???", 1, "self improvment"));
-		this.books.add(new DownloadableBook("about_speed_reading.read0r",
+		this.mBooks.add(new DownloadableBook("about_speed_reading.read0r",
 				"Fast Reading Description", "???", 4, "science"));
-		this.books.add(new DownloadableBook("hypno.read0r", "Hello trainer",
+		this.mBooks.add(new DownloadableBook("hypno.read0r", "Hello trainer",
 				"???", 1, "fiction"));
-		this.books.add(new DownloadableBook("the_show_must_go_on.read0r",
+		this.mBooks.add(new DownloadableBook("the_show_must_go_on.read0r",
 				"The Show Must Go On", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("are_you_the_killer.read0r",
+		this.mBooks.add(new DownloadableBook("are_you_the_killer.read0r",
 				"Are you the killer?", "???", 1, "thriller"));
-		this.books.add(new DownloadableBook("the_genious_inside_you.read0r",
+		this.mBooks.add(new DownloadableBook("the_genious_inside_you.read0r",
 				"The genious inside you", "???", 1, "self improvment"));
-		this.books.add(new DownloadableBook("about_speed_reading.read0r",
+		this.mBooks.add(new DownloadableBook("about_speed_reading.read0r",
 				"Fast Reading Description", "???", 4, "science"));
-		this.books.add(new DownloadableBook("hypno.read0r", "Hello trainer",
+		this.mBooks.add(new DownloadableBook("hypno.read0r", "Hello trainer",
 				"???", 1, "fiction"));
-		this.books.add(new DownloadableBook("the_show_must_go_on.read0r",
+		this.mBooks.add(new DownloadableBook("the_show_must_go_on.read0r",
 				"The Show Must Go On", "???", 1, "fiction"));
-		this.books.add(new DownloadableBook("are_you_the_killer.read0r",
+		this.mBooks.add(new DownloadableBook("are_you_the_killer.read0r",
 				"Are you the killer?", "???", 1, "thriller"));
-		this.books.add(new DownloadableBook("the_genious_inside_you.read0r",
+		this.mBooks.add(new DownloadableBook("the_genious_inside_you.read0r",
 				"The genious inside you", "???", 1, "self improvment"));
 	}
 
 	public ArrayList<String> getCategories() {
 		ArrayList<String> cats = new ArrayList<String>();
 
-		for (DownloadableBook book : this.books) {
+		for (DownloadableBook book : this.mBooks) {
 			if (!cats.contains(book.category)) {
 				cats.add(book.category);
 			}
@@ -59,14 +59,14 @@ public class FakeDistantDataHandler implements IDistantDataHandler {
 	}
 
 	public ArrayList<DownloadableBook> getBooks() {
-		return this.books;
+		return this.mBooks;
 	}
 
 	public ArrayList<DownloadableBook> getFilteredBooks(
 			ArrayList<String> categories) {
 		ArrayList<DownloadableBook> filtered = new ArrayList<DownloadableBook>();
 
-		for (DownloadableBook downloadableBook : this.books) {
+		for (DownloadableBook downloadableBook : this.mBooks) {
 			if (categories.contains(downloadableBook.category)) {
 				filtered.add(downloadableBook);
 			}

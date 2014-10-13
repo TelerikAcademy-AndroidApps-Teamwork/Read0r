@@ -16,38 +16,38 @@ import android.widget.Button;
 
 public class MainMenuActivity extends ActionBarActivity implements OnClickListener {
 
-	private Intent readSelectIntent;
-	private Intent downloadIntent;
-	private Intent settingsIntent;
-	private int theme;
-	private Button readBtn;
-	private Button downloadBtn;
-	private Button settingsBtn;
-	private Button quitBtn;
+	private Intent mReadSelectIntent;
+	private Intent mDownloadIntent;
+	private Intent mSettingsIntent;
+	private int mTheme;
+	private Button mReadBtn;
+	private Button mDownloadBtn;
+	private Button mSettingsBtn;
+	private Button mQuitBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_menu);
 
-		this.readSelectIntent = new Intent(MainMenuActivity.this,
+		this.mReadSelectIntent = new Intent(MainMenuActivity.this,
 				ReadSelectActivity.class);
-		this.downloadIntent = new Intent(MainMenuActivity.this,
+		this.mDownloadIntent = new Intent(MainMenuActivity.this,
 				DownloadActivity.class);
-		this.settingsIntent = new Intent(MainMenuActivity.this,
+		this.mSettingsIntent = new Intent(MainMenuActivity.this,
 				SettingsActivity.class);
 
-		this.readBtn = (Button) this.findViewById(R.id.main_readButton);
-		this.downloadBtn = (Button) this.findViewById(R.id.main_downloadButton);
-		this.settingsBtn = (Button) this.findViewById(R.id.main_settingsButton);
-		this.quitBtn = (Button) this.findViewById(R.id.main_quitButton);
+		this.mReadBtn = (Button) this.findViewById(R.id.main_readButton);
+		this.mDownloadBtn = (Button) this.findViewById(R.id.main_downloadButton);
+		this.mSettingsBtn = (Button) this.findViewById(R.id.main_settingsButton);
+		this.mQuitBtn = (Button) this.findViewById(R.id.main_quitButton);
 
-		this.readBtn.setOnClickListener(this);
-		this.downloadBtn.setOnClickListener(this);
-		this.settingsBtn.setOnClickListener(this);
-		this.quitBtn.setOnClickListener(this);
+		this.mReadBtn.setOnClickListener(this);
+		this.mDownloadBtn.setOnClickListener(this);
+		this.mSettingsBtn.setOnClickListener(this);
+		this.mQuitBtn.setOnClickListener(this);
 		
-		this.theme = this.getResources().getInteger(R.integer.theme);
+		this.mTheme = this.getResources().getInteger(R.integer.theme);
 		
 		this.applyTheme();
 	}
@@ -88,16 +88,16 @@ public class MainMenuActivity extends ActionBarActivity implements OnClickListen
 	}
 
 	public void goToDownload() {
-		this.startActivity(this.downloadIntent);
+		this.startActivity(this.mDownloadIntent);
 	}
 
 	public void goToReadSelect() {
-		this.startActivity(this.readSelectIntent);
+		this.startActivity(this.mReadSelectIntent);
 
 	}
 
 	public void goToSettings() {
-		this.startActivity(this.settingsIntent);
+		this.startActivity(this.mSettingsIntent);
 	}
 
 	public void quit() {

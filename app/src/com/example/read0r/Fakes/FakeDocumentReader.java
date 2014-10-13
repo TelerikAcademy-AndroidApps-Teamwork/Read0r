@@ -8,14 +8,14 @@ import com.example.read0r.Interfaces.IDocumentReader;
 
 public class FakeDocumentReader implements IDocumentReader {
 
-	private String text = "That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test.";
+	private String mText = "That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test.";
 
-	private int portionSize;
-	private int position;
+	private int mPortionSize;
+	private int mPosition;
 
 	@Override
 	public int getCurrentPosition() {
-		return this.position;
+		return this.mPosition;
 	}
 
 	@Override
@@ -25,19 +25,19 @@ public class FakeDocumentReader implements IDocumentReader {
 
 	@Override
 	public void setPortionSize(int portionSize) {
-		this.portionSize = portionSize;
+		this.mPortionSize = portionSize;
 	}
 
 	@Override
 	public List<String> getNextWordPortion(int letterIndex) {
 		ArrayList<String> results = new ArrayList<String>();
-		int len = this.text.length() - letterIndex;
-		if (len > this.portionSize) {
-			len = this.portionSize;
+		int len = this.mText.length() - letterIndex;
+		if (len > this.mPortionSize) {
+			len = this.mPortionSize;
 		}
 		int charsCount = addWordsOfStringToCollection(
-				this.text.substring(letterIndex, len), results);
-		this.position = letterIndex + charsCount;
+				this.mText.substring(letterIndex, len), results);
+		this.mPosition = letterIndex + charsCount;
 		return results;
 	}
 
@@ -55,7 +55,7 @@ public class FakeDocumentReader implements IDocumentReader {
 
 	@Override
 	public long getDocLength() {
-		return this.text.length();
+		return this.mText.length();
 	}
 
 }

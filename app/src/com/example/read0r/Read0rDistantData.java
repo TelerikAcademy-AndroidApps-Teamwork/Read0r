@@ -13,22 +13,22 @@ import com.telerik.everlive.sdk.core.result.RequestResult;
 
 public class Read0rDistantData implements IDistantDataHandler {
 
-	private EverliveApp app;
-	private ArrayList<DownloadableBook> lastKnownData;
+	private EverliveApp mApp;
+	private ArrayList<DownloadableBook> mLastKnownData;
 
 	public Read0rDistantData() {
-		this.app = new EverliveApp("GSHZpwj9o3uHSR2d");
-		this.app.workWith().authentication().login("Siko", "123456")
+		this.mApp = new EverliveApp("GSHZpwj9o3uHSR2d");
+		this.mApp.workWith().authentication().login("Siko", "123456")
 				.executeSync();
 	}
 
 	public ArrayList<String> getCategories() {
-		if (this.lastKnownData == null) {
+		if (this.mLastKnownData == null) {
 			this.getBooks(); // refreshes the lastKnownData field
 		}
 
 		ArrayList<String> cats = new ArrayList<String>();
-		for (DownloadableBook book : this.lastKnownData) {
+		for (DownloadableBook book : this.mLastKnownData) {
 			if (!cats.contains(book.category)) {
 				cats.add(book.category);
 			}
@@ -39,19 +39,19 @@ public class Read0rDistantData implements IDistantDataHandler {
 	public ArrayList<DownloadableBook> getBooks() {
 
 		RequestResult<ArrayList<DownloadableBook>> resultList;
-		DataHandler data = app.workWith().data(DownloadableBook.class);
+		DataHandler data = mApp.workWith().data(DownloadableBook.class);
 		resultList = data.getAll().executeSync();
 
 		if (resultList.getSuccess()) {
 			Object obj = resultList.getValue();
-			this.lastKnownData = resultList.getValue();
-			Log.e("Everlive Success", this.lastKnownData.size()
+			this.mLastKnownData = resultList.getValue();
+			Log.e("Everlive Success", this.mLastKnownData.size()
 					+ " items were loaded.");
 		} else {
 			Log.e("Everlive Error", resultList.getError().toString());
-			this.lastKnownData = new ArrayList<DownloadableBook>();
+			this.mLastKnownData = new ArrayList<DownloadableBook>();
 		}
-		return this.lastKnownData;
+		return this.mLastKnownData;
 	}
 
 	public ArrayList<DownloadableBook> getFilteredBooks(
@@ -59,7 +59,7 @@ public class Read0rDistantData implements IDistantDataHandler {
 		ArrayList<DownloadableBook> filtered = new ArrayList<DownloadableBook>();
 		this.getBooks(); // refreshes the lastKnownData field
 
-		for (DownloadableBook downloadableBook : this.lastKnownData) {
+		for (DownloadableBook downloadableBook : this.mLastKnownData) {
 			if (categories.contains(downloadableBook.category)) {
 				filtered.add(downloadableBook);
 			}
@@ -69,6 +69,6 @@ public class Read0rDistantData implements IDistantDataHandler {
 	}
 
 	public EverliveApp getEverlive() {
-		return this.app;
+		return this.mApp;
 	}
 }
