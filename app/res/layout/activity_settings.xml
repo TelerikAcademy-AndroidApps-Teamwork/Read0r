@@ -109,19 +109,25 @@
             android:layout_weight="5"
             android:orientation="horizontal" >
 
-            <RadioButton
-                android:id="@+id/settings_darkRadio"
+            <RadioGroup
+                android:id="@+id/radioGroup1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dark"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_height="wrap_content" >
 
-            <RadioButton
-                android:id="@+id/settings_lightRadio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Light"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                <RadioButton
+                    android:id="@+id/settings_darkRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dark"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <RadioButton
+                    android:id="@+id/settings_lightRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Light"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </RadioGroup>
         </LinearLayout>
     </LinearLayout>
 

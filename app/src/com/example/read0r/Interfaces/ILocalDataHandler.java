@@ -12,4 +12,6 @@ public interface ILocalDataHandler {
 	List<ReadableBook> getBooks();
 
 	void addBook(ReadableBook book);
+	
+	void updateBook(ReadableBook book);
 }

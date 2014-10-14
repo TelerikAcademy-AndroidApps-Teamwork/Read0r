@@ -3,31 +3,38 @@ package com.example.read0r;
 public class Read0rWord {
 	public Read0rWord(String word) {
 		this.setWord(word);
-		this.milliSeconds = calcMilliSeconds();
+		this.mMilliSeconds = calcMilliSeconds();
 	}
 
-	private String word;
-	private int milliSeconds;
-	
+	private static char[] mSpecialChars = { '.', '!', '?', ',', ';', ':' };
+	private String mWord;
+	private int mMilliSeconds;
+
 	protected int calcMilliSeconds() {
-		int result = 100 + this.getWord().length() * 20;
+		int result = 150 + this.getWord().length() * 50;
+		for (char ch : mSpecialChars) {
+			char lastCh = this.getWord().charAt(this.getWord().length() - 1);
+			if (ch == lastCh) {
+				result += 150;
+			}
+		}
 		return result;
 	}
 
 	public String getWord() {
-		return word;
+		return mWord;
 	}
 
 	public void setWord(String word) {
-		this.word = word;
-		this.milliSeconds = calcMilliSeconds();
+		this.mWord = word;
+		this.mMilliSeconds = calcMilliSeconds();
 	}
 
 	public int getMilliSeconds() {
-		return milliSeconds;
+		return mMilliSeconds;
 	}
-	
+
 	public void setMilliSeconds(int ms) {
-		this.milliSeconds = ms;
+		this.mMilliSeconds = ms;
 	}
 }

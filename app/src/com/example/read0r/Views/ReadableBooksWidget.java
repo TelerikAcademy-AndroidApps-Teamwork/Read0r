@@ -1,6 +1,7 @@
 package com.example.read0r.Views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.example.read0r.R;
@@ -29,41 +30,43 @@ import android.view.ScaleGestureDetector.OnScaleGestureListener;
 
 public class ReadableBooksWidget extends View implements OnGestureListener,
 		OnScaleGestureListener {
-	private ILocalDataHandler localDataHandler;
-	private List<ReadableBook> books;
-	private ReadableBook currentBook;
-	private int currentBookIndex;
+	private ILocalDataHandler mLocalDataHandler;
+	private List<ReadableBook> mBooks;
+	private ReadableBook mCurrentBook;
+	private int mCurrentBookIndex;
 
-	private GestureDetector guestureDetector;
-	private ScaleGestureDetector scaleDetector;
+	private GestureDetector mGuestureDetector;
+	private ScaleGestureDetector mScaleDetector;
 
-	private Paint currentBackgroundPaint;
-	private Paint currentFontPaint;
-	private Paint notCurrentPaint;
-	private boolean initialized;
+	private Paint mCurrentBackgroundPaint;
+	private Paint mCurrentFontPaint;
+	private Paint mNotCurrentPaint;
+	private boolean mInitialized;
 
-	private int width;
-	private int height;
-	private int cellWidth;
-	private int cellHeight;
+	private int mWidth;
+	private int mHeight;
+	private int mCellWidth;
+	private int mCellHeight;
 
-	private int currentElementLeft;
-	private int currentElementTop;
-	private int currentElementRight;
-	private int currentElementBottom;
+	private int mCurrentElementLeft;
+	private int mCurrentElementTop;
+	private int mCurrentElementRight;
+	private int mCurrentElementBottom;
 
-	private int nextElementLeft;
-	private int nextElementTop;
-	private int nextElementBottom;
-	private int nextElementRight;
+	private int mNextElementLeft;
+	private int mNextElementTop;
+	private int mNextElementBottom;
+	private int mNextElementRight;
 
-	private int prevElementLeft;
-	private int prevElementTop;
-	private int prevElementRight;
-	private int prevElementBottom;
+	private int mPrevElementLeft;
+	private int mPrevElementTop;
+	private int mPrevElementRight;
+	private int mPrevElementBottom;
 
-	private int offset;
-	private int centerLineVertical;
+	private int mOffset;
+	private int mCenterLineVertical;
+	private Date mDateOfLastTap;
+	private long mMillisecondsBetweenClicks = 500;
 
 	public ReadableBooksWidget(Context context) {
 		this(context, null, 0);
@@ -81,27 +84,27 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 				R.bool.useFakeLocalData);
 
 		if (localDataIsFake) {
-			this.localDataHandler = new FakeLocalDataHandler();
+			this.mLocalDataHandler = new FakeLocalDataHandler();
 		} else {
-			this.localDataHandler = new Read0rLocalData();
+			this.mLocalDataHandler = new Read0rLocalData();
 		}
 
-		this.books = this.localDataHandler.getBooks();
-		this.currentBook = this.books.size() > 0 ? this.books.get(0)
+		this.mBooks = this.mLocalDataHandler.getBooks();
+		this.mCurrentBook = this.mBooks.size() > 0 ? this.mBooks.get(0)
 				: new ReadableBook("", "", "", 1, "", 0);
-		this.currentBookIndex = 0;
+		this.mCurrentBookIndex = 0;
 
-		this.guestureDetector = new GestureDetector(this.getContext(), this);
-		this.scaleDetector = new ScaleGestureDetector(this.getContext(), this);
+		this.mGuestureDetector = new GestureDetector(this.getContext(), this);
+		this.mScaleDetector = new ScaleGestureDetector(this.getContext(), this);
 
-		this.currentBackgroundPaint = new Paint();
-		this.currentBackgroundPaint.setColor(Color.LTGRAY);
+		this.mCurrentBackgroundPaint = new Paint();
+		this.mCurrentBackgroundPaint.setColor(Color.LTGRAY);
 
-		this.currentFontPaint = new Paint();
-		this.currentFontPaint.setColor(Color.BLACK);
+		this.mCurrentFontPaint = new Paint();
+		this.mCurrentFontPaint.setColor(Color.BLACK);
 
-		this.notCurrentPaint = new Paint();
-		this.notCurrentPaint.setColor(Color.BLACK);
+		this.mNotCurrentPaint = new Paint();
+		this.mNotCurrentPaint.setColor(Color.BLACK);
 	}
 
 	@Override
@@ -109,117 +112,117 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 
-		if (changed || this.initialized) {
-			this.initialized = true;
+		if (changed || this.mInitialized) {
+			this.mInitialized = true;
 
-			this.width = Math.abs(left - right);
-			this.height = Math.abs(top - bottom);
-			this.cellWidth = this.width / 11;
-			this.cellHeight = this.width / 10;
+			this.mWidth = Math.abs(left - right);
+			this.mHeight = Math.abs(top - bottom);
+			this.mCellWidth = this.mWidth / 11;
+			this.mCellHeight = this.mWidth / 10;
 
-			this.currentElementLeft = this.cellWidth * 2;
-			this.currentElementTop = this.cellHeight * 2;
-			this.currentElementRight = this.cellWidth * 9;
-			this.currentElementBottom = this.cellHeight * 8;
+			this.mCurrentElementLeft = this.mCellWidth * 2;
+			this.mCurrentElementTop = this.mCellHeight * 2;
+			this.mCurrentElementRight = this.mCellWidth * 9;
+			this.mCurrentElementBottom = this.mCellHeight * 8;
 
-			this.nextElementLeft = this.cellWidth * 10;
-			this.nextElementTop = this.cellHeight;
-			this.nextElementRight = this.cellWidth * 14;
-			this.nextElementBottom = this.cellHeight * 7;
+			this.mNextElementLeft = this.mCellWidth * 10;
+			this.mNextElementTop = this.mCellHeight;
+			this.mNextElementRight = this.mCellWidth * 14;
+			this.mNextElementBottom = this.mCellHeight * 7;
 
-			this.prevElementLeft = this.cellWidth * -3;
-			this.prevElementTop = this.cellHeight;
-			this.prevElementRight = this.cellWidth;
-			this.prevElementBottom = this.cellHeight * 7;
+			this.mPrevElementLeft = this.mCellWidth * -3;
+			this.mPrevElementTop = this.mCellHeight;
+			this.mPrevElementRight = this.mCellWidth;
+			this.mPrevElementBottom = this.mCellHeight * 7;
 		}
 	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
 
-		if (this.offset != 0) {
-			canvas.translate(this.offset, 0);
+		if (this.mOffset != 0) {
+			canvas.translate(this.mOffset, 0);
 
-			int drawLen = this.width / 3;
-			if (this.offset > drawLen) {
+			int drawLen = this.mWidth / 3;
+			if (this.mOffset > drawLen) {
 				selectPrevElement();
-			} else if (-this.offset > drawLen) {
+			} else if (-this.mOffset > drawLen) {
 				selectNextElement();
 			}
 		}
 
-		if (initialized) {
+		if (mInitialized) {
 
 		}
-		if (this.currentBookIndex > 0) {
-			canvas.drawRect(prevElementLeft, prevElementTop, prevElementRight,
-					prevElementBottom, notCurrentPaint);
+		if (this.mCurrentBookIndex > 0) {
+			canvas.drawRect(mPrevElementLeft, mPrevElementTop, mPrevElementRight,
+					mPrevElementBottom, mNotCurrentPaint);
 		}
 
-		canvas.drawRect(currentElementLeft, currentElementTop,
-				currentElementRight, currentElementBottom,
-				currentBackgroundPaint);
+		canvas.drawRect(mCurrentElementLeft, mCurrentElementTop,
+				mCurrentElementRight, mCurrentElementBottom,
+				mCurrentBackgroundPaint);
 
-		if (this.currentBookIndex < this.books.size() - 1) {
-			canvas.drawRect(nextElementLeft, nextElementTop, nextElementRight,
-					nextElementBottom, notCurrentPaint);
+		if (this.mCurrentBookIndex < this.mBooks.size() - 1) {
+			canvas.drawRect(mNextElementLeft, mNextElementTop, mNextElementRight,
+					mNextElementBottom, mNotCurrentPaint);
 		}
 
-		this.currentFontPaint.setTextSize(this.determineMaxTextSize(
-				this.currentBook, this.cellWidth * 5));
+		this.mCurrentFontPaint.setTextSize(this.determineMaxTextSize(
+				this.mCurrentBook, this.mCellWidth * 5));
 
-		this.drawTextStill(canvas, (this.currentBookIndex + 1) + " / "
-				+ this.books.size(), this.cellHeight);
+		this.drawTextStill(canvas, (this.mCurrentBookIndex + 1) + " / "
+				+ this.mBooks.size(), this.mCellHeight);
 
-		this.drawText(canvas, this.currentBook.title, this.cellHeight * 3);
-		this.drawText(canvas, this.currentBook.author, this.cellHeight * 4);
-		this.drawText(canvas, getCategory(this.currentBook),
-				this.cellHeight * 5);
-		this.drawText(canvas, getProgress(this.currentBook),
-				this.cellHeight * 6);
+		this.drawText(canvas, this.mCurrentBook.title, this.mCellHeight * 3);
+		this.drawText(canvas, this.mCurrentBook.author, this.mCellHeight * 4);
+		this.drawText(canvas, getCategory(this.mCurrentBook),
+				this.mCellHeight * 5);
+		this.drawText(canvas, getProgress(this.mCurrentBook),
+				this.mCellHeight * 6);
 
-		this.currentFontPaint.setTextSize(this.determineMaxTextSize(
-				this.currentBook, this.cellWidth * 5) / 2);
+		this.mCurrentFontPaint.setTextSize(this.determineMaxTextSize(
+				this.mCurrentBook, this.mCellWidth * 5) / 2);
 
-		this.drawText(canvas, "(long press to read)", this.cellHeight * 7);
+		this.drawText(canvas, "(long press to read)", this.mCellHeight * 7);
 
 		super.onDraw(canvas);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		boolean simpleGuestureHandled = this.guestureDetector
+		boolean simpleGuestureHandled = this.mGuestureDetector
 				.onTouchEvent(event);
-		boolean scaleGuestureHandled = this.scaleDetector.onTouchEvent(event);
+		boolean scaleGuestureHandled = this.mScaleDetector.onTouchEvent(event);
 		return simpleGuestureHandled || scaleGuestureHandled;
 	}
 
 	private void drawText(Canvas canvas, String str, int y) {
-		float x = (this.width / 2)
-				- (this.currentFontPaint.measureText(str) / 2);
-		canvas.drawText(str, x, y, this.currentFontPaint);
+		float x = (this.mWidth / 2)
+				- (this.mCurrentFontPaint.measureText(str) / 2);
+		canvas.drawText(str, x, y, this.mCurrentFontPaint);
 	}
 
 	private void drawTextStill(Canvas canvas, String str, int y) {
-		float x = (this.width / 2)
-				- (this.currentFontPaint.measureText(str) / 2) - this.offset;
-		canvas.drawText(str, x, y, this.currentFontPaint);
+		float x = (this.mWidth / 2)
+				- (this.mCurrentFontPaint.measureText(str) / 2) - this.mOffset;
+		canvas.drawText(str, x, y, this.mCurrentFontPaint);
 	}
 
 	private void selectNextElement() {
-		if (this.currentBookIndex < this.books.size() - 1) {
-			this.currentBookIndex++;
-			this.currentBook = this.books.get(this.currentBookIndex);
-			this.offset = 0;
+		if (this.mCurrentBookIndex < this.mBooks.size() - 1) {
+			this.mCurrentBookIndex++;
+			this.mCurrentBook = this.mBooks.get(this.mCurrentBookIndex);
+			this.mOffset = 0;
 			this.invalidate();
 		}
 	}
 
 	private void selectPrevElement() {
-		if (this.currentBookIndex > 0) {
-			this.currentBookIndex--;
-			this.currentBook = this.books.get(this.currentBookIndex);
-			this.offset = 0;
+		if (this.mCurrentBookIndex > 0) {
+			this.mCurrentBookIndex--;
+			this.mCurrentBook = this.mBooks.get(this.mCurrentBookIndex);
+			this.mOffset = 0;
 			this.invalidate();
 		}
 	}
@@ -284,22 +287,30 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
+		if (this.mDateOfLastTap != null) {
+			long timeSpan = new Date().getTime() - mDateOfLastTap.getTime();
+			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks ) {
+				this.onLongPress(e);
+				this.mDateOfLastTap = null;
+				return true;
+			}
+		}
+		this.mDateOfLastTap = new Date();
 		return false;
 	}
 
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
-		this.offset -= distanceX;
+		this.mOffset -= distanceX;
 
-		if (this.currentBookIndex == this.books.size() - 1) {
-			if (this.offset < 0) {
-				this.offset = 0;
+		if (this.mCurrentBookIndex == this.mBooks.size() - 1) {
+			if (this.mOffset < 0) {
+				this.mOffset = 0;
 			}
 		}
-		if (this.currentBookIndex == 0) {
-			if (this.offset > 0) {
-				this.offset = 0;
+		if (this.mCurrentBookIndex == 0) {
+			if (this.mOffset > 0) {
+				this.mOffset = 0;
 			}
 		}
 
@@ -311,8 +322,8 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 		float x = e.getX();
 		float y = e.getY();
 
-		if (this.currentElementTop < y && y < this.currentElementBottom
-				&& this.currentElementLeft < x && x < this.currentElementRight) {
+		if (this.mCurrentElementTop < y && y < this.mCurrentElementBottom
+				&& this.mCurrentElementLeft < x && x < this.mCurrentElementRight) {
 			((ReadSelectActivity) this.getContext()).goToRead();
 		}
 	}
@@ -328,7 +339,7 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public ReadableBook getCurrentBook() {
-		return this.currentBook;
+		return this.mCurrentBook;
 	}
 
 }

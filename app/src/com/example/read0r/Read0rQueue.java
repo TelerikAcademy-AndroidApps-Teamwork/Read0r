@@ -10,23 +10,23 @@ import com.example.read0r.Models.ReadableBook;
 
 public class Read0rQueue implements IRead0rQueue {
 
-	Queue<Read0rWord> words = new LinkedList<Read0rWord>();
+	private Queue<Read0rWord> mWords = new LinkedList<Read0rWord>();
 	
 	public Read0rWord getNext() {
-		return this.words.poll();
+		return this.mWords.poll();
 	}
 
 	public void add(Read0rWord word) {
-		this.words.add(word);
+		this.mWords.add(word);
 	}
 
 	public int count() {
-		return this.words.size();
+		return this.mWords.size();
 	}
 
 	public int getCharSum() {
 		int num = 0;
-		for (Read0rWord wrd : words) {
+		for (Read0rWord wrd : mWords) {
 			num += wrd.getWord().length();
 			num ++; // for the space character of that word
 		}

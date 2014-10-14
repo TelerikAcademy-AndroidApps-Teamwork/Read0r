@@ -18,27 +18,27 @@ import android.widget.Button;
 
 public class ReadSelectActivity extends ActionBarActivity implements OnClickListener{
 
-	private Intent readIntent;
-	private int theme;
-	private ReadableBook currentBook;
-	private Button backBtn;
-	private Button readBtn;
+	private Intent mReadIntent;
+	private int mTheme;
+	private ReadableBook mCurrentBook;
+	private Button mBackBtn;
+	private Button mReadBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_select);
 		
-		this.readIntent = new Intent(ReadSelectActivity.this,
+		this.mReadIntent = new Intent(ReadSelectActivity.this,
 				ReadActivity.class);
-		
-		this.theme = this.getResources().getInteger(R.integer.theme);
 
-		this.backBtn = (Button) this.findViewById(R.id.select_backButton);
-		this.readBtn = (Button) this.findViewById(R.id.select_readButton);
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
 
-		this.backBtn.setOnClickListener(this);
-		this.readBtn.setOnClickListener(this);
+		this.mBackBtn = (Button) this.findViewById(R.id.select_backButton);
+		this.mReadBtn = (Button) this.findViewById(R.id.select_readButton);
+
+		this.mBackBtn.setOnClickListener(this);
+		this.mReadBtn.setOnClickListener(this);
 		
 		this.applyTheme();
 	}
@@ -72,11 +72,11 @@ public class ReadSelectActivity extends ActionBarActivity implements OnClickList
 
 	public void goToRead() {
 		ReadableBooksWidget v = (ReadableBooksWidget)this.findViewById(R.id.readableBooksWidget1);
-		this.currentBook = v.getCurrentBook();
+		this.mCurrentBook = v.getCurrentBook();
 
-		this.readIntent.putExtra("book_id", this.currentBook.id);
+		this.mReadIntent.putExtra("book_id", this.mCurrentBook.id);
 		
-		this.startActivity(this.readIntent);
+		this.startActivity(this.mReadIntent);
 	}
 
 	public void onClick(View v) {

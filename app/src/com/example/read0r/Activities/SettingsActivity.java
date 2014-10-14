@@ -6,50 +6,89 @@ import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
 
 import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 
+@SuppressLint("NewApi")
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends ActionBarActivity implements
 		OnClickListener {
 
-	private int theme;
-	private RadioButton lightThemeRadio;
-	private RadioButton darkThemeRadio;
-	private Button backBtn;
-	private Button saveBtn;
+	private int mTheme;
+	private RadioButton mLightThemeRadio;
+	private RadioButton mDarkThemeRadio;
+	private Button mBackBtn;
+	private Button mSaveBtn;
+	private int mFontSize;
+	private int mSpeedPercent;
+	private EditText mFontInput;
+	private EditText mSpeedInput;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-		this.backBtn = (Button) this.findViewById(R.id.settings_backButton);
-		this.saveBtn = (Button) this.findViewById(R.id.settings_saveButton);
+		this.mBackBtn = (Button) this.findViewById(R.id.settings_backButton);
+		this.mSaveBtn = (Button) this.findViewById(R.id.settings_saveButton);
 
-		this.lightThemeRadio = (RadioButton) this
+		this.mLightThemeRadio = (RadioButton) this
 				.findViewById(R.id.settings_lightRadio);
-		this.darkThemeRadio = (RadioButton) this
+		this.mDarkThemeRadio = (RadioButton) this
 				.findViewById(R.id.settings_darkRadio);
 
-		this.backBtn.setOnClickListener(this);
-		this.saveBtn.setOnClickListener(this);
-		this.lightThemeRadio.setOnClickListener(this);
-		this.darkThemeRadio.setOnClickListener(this);
-		
-		this.theme = this.getResources().getInteger(R.integer.theme);
+		this.mFontInput = (EditText) this.findViewById(R.id.settings_fontInput);
+		this.mSpeedInput = (EditText) this
+				.findViewById(R.id.settings_speedInput);
 
+		this.mBackBtn.setOnClickListener(this);
+		this.mSaveBtn.setOnClickListener(this);
+		this.mLightThemeRadio.setOnClickListener(this);
+		this.mDarkThemeRadio.setOnClickListener(this);
+
+		loadSettings();
 		this.applyTheme();
+		this.displaySettings();
+	}
+
+	private void loadSettings() {
+
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
+		this.mFontSize = com.example.read0r.Settings.getFontSize(this);
+		this.mSpeedPercent = com.example.read0r.Settings.getReadingSpeed(this);
 	}
 
 	private void applyTheme() {
 		// TODO : Apply the theme
+	}
+
+	private void displaySettings() {
+		this.mFontInput.setText(this.mFontSize + "");
+		this.mSpeedInput.setText(this.mSpeedPercent + "");
+
+		if (this.mTheme == Color.WHITE) {
+			this.mDarkThemeRadio.setChecked(false);
+			this.mLightThemeRadio.setChecked(true);
+		} else if (this.mTheme == Color.BLACK) {
+			this.mLightThemeRadio.setChecked(false);
+			this.mDarkThemeRadio.setChecked(true);
+		}
 	}
 
 	@Override
@@ -76,12 +115,44 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	public void saveSettings() {
-		// TODO : Save the settings
+		this.mFontSize = Integer.parseInt(this.mFontInput.getText().toString());
+		this.mSpeedPercent = Integer.parseInt(this.mSpeedInput.getText()
+				.toString());
+
+		boolean settingsCommited = true;
+		settingsCommited = com.example.read0r.Settings.setFontSize(this,
+				this.mFontSize);
+		settingsCommited = settingsCommited
+				&& com.example.read0r.Settings.setReadingSpeed(this,
+						this.mSpeedPercent);
+		settingsCommited = settingsCommited
+				&& com.example.read0r.Settings.setTheme(this, this.mTheme);
+
+		if (!settingsCommited) {
+			showNotification("Read0r settings were not saved",
+					"There was a problem saving your settings",
+					R.id.notificationId_settingsError);
+		}
+
 		this.goBack();
 	}
 
+	private void showNotification(String title, String content,
+			int notificationidId) {
+		Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.attention);
+		Notification.Builder builder = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.attention)
+				.setLargeIcon(
+						Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
+				.setContentTitle(title).setContentText(content);
+		Notification notification = builder.build();
+		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+				.notify(notificationidId, notification);
+	}
+
 	private void changeTheme(int color) {
-		this.theme = color;
+		this.mTheme = color;
 		this.applyTheme();
 	}
 

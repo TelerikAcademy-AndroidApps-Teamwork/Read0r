@@ -2,22 +2,28 @@ package com.example.read0r.Activities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.example.read0r.DownloadHandler;
 import com.example.read0r.R;
 import com.example.read0r.Read0rDistantData;
 import com.example.read0r.Read0rLocalData;
 import com.example.read0r.Fakes.FakeDistantDataHandler;
+import com.example.read0r.Fakes.FakeDownloadHandler;
 import com.example.read0r.Fakes.FakeLocalDataHandler;
 import com.example.read0r.Interfaces.IDistantDataHandler;
+import com.example.read0r.Interfaces.IDownloadHandler;
 import com.example.read0r.Interfaces.ILocalDataHandler;
 import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.Views.DownloadableBooksWidget;
+import com.telerik.everlive.sdk.core.EverliveApp;
 
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.R.integer;
+import android.R.string;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -50,59 +56,68 @@ import android.widget.Toast;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DownloadActivity extends ActionBarActivity {
 
-	private Intent downloadFilterIntent;
-	private int theme;
-	private IDistantDataHandler distantDataHandler;
-	private ArrayList<String> filters;
-	private ArrayList<DownloadableBook> content;
-	private ILocalDataHandler localDataHandler;
-	private DownloadHandler downloadHandler;
-	private Button backBtn;
-	private Button filterBtn;
-	private DownloadableBooksWidget booksWidget;
-	private TextView pageCounter;
-	private DownloadableBook bookToDownload;
+	private Intent mDownloadFilterIntent;
+	private int mTheme;
+	private IDistantDataHandler mDistantDataHandler;
+	private ArrayList<String> mFilters;
+	private ArrayList<DownloadableBook> mContent;
+	private ILocalDataHandler mLocalDataHandler;
+	private IDownloadHandler mDownloadHandler;
+	private Button mBackBtn;
+	private Button mFilterBtn;
+	private DownloadableBooksWidget mBooksWidget;
+	private TextView mPageCounter;
+	private DownloadableBook mBookToDownload;
+	private PopupWindow mPopup;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download);
 
-		this.downloadFilterIntent = new Intent(DownloadActivity.this,
+		this.mDownloadFilterIntent = new Intent(DownloadActivity.this,
 				DownloadFilterActivity.class);
 
-		this.theme = this.getResources().getInteger(R.integer.theme);
-		boolean distantDataIsFake = this.getResources().getBoolean(R.bool.useFakeDistantData);
-		boolean localDataIsFake = this.getResources().getBoolean(R.bool.useFakeLocalData);
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
+		
+		boolean distantDataIsFake = this.getResources().getBoolean(
+				R.bool.useFakeDistantData);
+		boolean localDataIsFake = this.getResources().getBoolean(
+				R.bool.useFakeLocalData);
+		boolean downloaderIsFake = this.getResources().getBoolean(
+				R.bool.useFakeDocDownloader);
 
 		if (distantDataIsFake) {
-			this.distantDataHandler = new FakeDistantDataHandler();
+			this.mDistantDataHandler = new FakeDistantDataHandler();
 		} else {
-			this.distantDataHandler = new Read0rDistantData();
+			this.mDistantDataHandler = new Read0rDistantData();
 		}
-		
-		if (localDataIsFake) {
-			this.localDataHandler = new FakeLocalDataHandler();
-		} else {
-			this.localDataHandler = new Read0rLocalData();
-		}
-		
-		
-		this.downloadHandler = new DownloadHandler();
 
-		this.backBtn = (Button) this.findViewById(R.id.download_backButton);
-		this.filterBtn = (Button) this.findViewById(R.id.download_filterButton);
-		this.pageCounter = (TextView) this
+		if (localDataIsFake) {
+			this.mLocalDataHandler = new FakeLocalDataHandler();
+		} else {
+			this.mLocalDataHandler = new Read0rLocalData();
+		}
+
+		if (downloaderIsFake) {
+			this.mDownloadHandler = new FakeDownloadHandler();
+		} else {
+			this.mDownloadHandler = new DownloadHandler();
+		}
+
+		this.mBackBtn = (Button) this.findViewById(R.id.download_backButton);
+		this.mFilterBtn = (Button) this.findViewById(R.id.download_filterButton);
+		this.mPageCounter = (TextView) this
 				.findViewById(R.id.download_pageTrackerTextView);
-		this.booksWidget = (DownloadableBooksWidget) this
+		this.mBooksWidget = (DownloadableBooksWidget) this
 				.findViewById(R.id.download_booksWidget);
 
-		this.backBtn.setOnClickListener(new OnClickListener() {
+		this.mBackBtn.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				goBack();
 			}
 		});
-		this.filterBtn.setOnClickListener(new OnClickListener() {
+		this.mFilterBtn.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				goToDownloadFilter();
 			}
@@ -119,27 +134,28 @@ public class DownloadActivity extends ActionBarActivity {
 
 	private void updateFilters(Intent data) {
 		if (data.hasExtra("filters")) {
-			this.filters = (ArrayList<String>) data.getExtras().get("filters");
-			if (this.filters != null) {
+			this.mFilters = (ArrayList<String>) data.getExtras().get("filters");
+			if (this.mFilters != null) {
 				return;
 			}
 		}
-		this.filters = this.distantDataHandler.getCategories();
+		this.mFilters = this.mDistantDataHandler.getCategories();
 	}
 
 	private void updateContent() {
-		this.content = this.distantDataHandler.getFilteredBooks(this.filters);
-		List<ReadableBook> ownedBooks = this.localDataHandler.getBooks();
+		this.mContent = this.mDistantDataHandler.getFilteredBooks(this.mFilters);
+		List<ReadableBook> ownedBooks = this.mLocalDataHandler.getBooks();
 
-		for (DownloadableBook book : this.content) {
+		for (DownloadableBook book : this.mContent) {
 			for (ReadableBook ownedBook : ownedBooks) {
 				if (book.title == ownedBook.title) {
 					book.isOwned = true;
+					break;
 				}
 			}
 		}
 
-		this.booksWidget.setBooks(this.content);
+		this.mBooksWidget.setBooks(this.mContent);
 	}
 
 	@Override
@@ -167,64 +183,94 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	public void updatePageCounter(String text) {
-		this.pageCounter.setText(text);
+		this.mPageCounter.setText(text);
 	}
 
 	public void onBookSelection(DownloadableBook book) {
-		this.bookToDownload = book;
-		showDownloadPrompt();
+		this.mBookToDownload = book;
+		if (!book.isOwned) {
+			showDownloadPrompt();
+		} else {
+			LayoutInflater inflater = (LayoutInflater) this
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = (View) inflater.inflate(R.layout.popup_message,
+					(ViewGroup) findViewById(R.id.popup_container));
+
+			this.mPopup = new PopupWindow(layout, 200, 150, false);
+			mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+			ViewGroup popupContainer = (ViewGroup) layout;
+			((TextView) popupContainer.getChildAt(0))
+					.setText("You already own this book!");
+			Button Ok = (Button) popupContainer.getChildAt(1);
+			Ok.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mPopup.dismiss();
+				}
+			});
+		}
 	}
 
 	public void onPromptResponseSelected(boolean downloadAccepted) {
 		if (downloadAccepted) {
-			ReadableBook downloadedBook = this.downloadHandler
-					.downloadBook(this,
-							((Read0rDistantData) this.distantDataHandler)
-									.getEverlive(), this.bookToDownload);
-			this.localDataHandler.addBook(downloadedBook);
+			boolean distantDataIsFake = this.getResources().getBoolean(
+					R.bool.useFakeDistantData);
+			String url;
+			if (distantDataIsFake) {
+				url = "";
+			} else {
+				EverliveApp everliveApp = ((Read0rDistantData) this.mDistantDataHandler)
+						.getEverlive();
+				UUID id = this.mBookToDownload.Book;
+				// TODO: Fix this somehow
+				// url = everliveApp.workWith().files().getFileDownloadUrl(id);
+				url = "http://www.fake.com";
+			}
+			ReadableBook downloadedBook = this.mDownloadHandler.downloadBook(
+					this, url, this.mBookToDownload);
+			this.mLocalDataHandler.addBook(downloadedBook);
 			this.updateContent();
-			onBookDownloaded(this.bookToDownload);
+			onBookDownloaded(this.mBookToDownload);
 		}
 	}
 
 	private void showDownloadPrompt() {
-		try {
-			LayoutInflater inflater = (LayoutInflater) this
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			ViewGroup layout = (ViewGroup) inflater.inflate(
-					R.layout.fragment_download_prompt,
-					(ViewGroup) findViewById(R.id.download_textView1));
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			((TextView) layout.getChildAt(1))
-					.setText("Do you want to download the book '" + this.bookToDownload.title
-							+ "'");
+		View layout = (View) inflater.inflate(R.layout.prompt_download,
+				(ViewGroup) findViewById(R.id.popup_element));
 
-			PopupWindow downloadPrompt = new PopupWindow(layout, 200, 200,
-					false);
-			downloadPrompt.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		this.mPopup = new PopupWindow(layout, 200, 200, false);
+		mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
-			Button Ok = (Button) ((ViewGroup) layout.getChildAt(2))
-					.getChildAt(0);
-			Button Cancel = (Button) ((ViewGroup) layout.getChildAt(2))
-					.getChildAt(1);
+		ViewGroup popupContainer = (ViewGroup) layout;
 
-			Cancel.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onPromptResponseSelected(false);
-				}
-			});
-			Cancel.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onPromptResponseSelected(true);
-				}
-			});
+		((TextView) popupContainer.getChildAt(1))
+				.setText("Do you want to download the book '"
+						+ this.mBookToDownload.title + "'");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Button Ok = (Button) ((ViewGroup) popupContainer.getChildAt(2))
+				.getChildAt(0);
+		Button Cancel = (Button) ((ViewGroup) popupContainer.getChildAt(2))
+				.getChildAt(1);
+
+		Cancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mPopup.dismiss();
+				onPromptResponseSelected(false);
+			}
+		});
+		Ok.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mPopup.dismiss();
+				onPromptResponseSelected(true);
+			}
+		});
 	}
 
 	public void goBack() {
@@ -232,10 +278,10 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	public void goToDownloadFilter() {
-		this.downloadFilterIntent.putExtra("filters", this.filters);
-		this.downloadFilterIntent.putExtra("categories",
-				this.distantDataHandler.getCategories());
-		this.startActivityForResult(this.downloadFilterIntent, 1);
+		this.mDownloadFilterIntent.putExtra("filters", this.mFilters);
+		this.mDownloadFilterIntent.putExtra("categories",
+				this.mDistantDataHandler.getCategories());
+		this.startActivityForResult(this.mDownloadFilterIntent, 1);
 	}
 
 	@SuppressLint("NewApi")

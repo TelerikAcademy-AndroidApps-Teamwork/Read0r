@@ -53,6 +53,11 @@ public class Read0rLocalData extends OrmLiteBaseActivity<DatabaseHelper> impleme
 	public void addBook(ReadableBook book) {
 		noteDao.create(book);
 	}	
+	
+	@Override
+	public void updateBook(ReadableBook book) {
+		noteDao.update(book);
+	}
 }
 
 

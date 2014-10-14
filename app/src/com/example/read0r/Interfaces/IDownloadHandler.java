@@ -8,6 +8,6 @@ import com.example.read0r.Models.ReadableBook;
 import com.telerik.everlive.sdk.core.EverliveApp;
 
 public interface IDownloadHandler {
-	ReadableBook downloadBook(DownloadActivity context, EverliveApp everlive,
+	ReadableBook downloadBook(DownloadActivity context, String url,
 			DownloadableBook bookToDownload);
 }

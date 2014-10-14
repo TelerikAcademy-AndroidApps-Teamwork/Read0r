@@ -22,9 +22,9 @@ import com.telerik.everlive.sdk.core.EverliveApp;
 public class DownloadHandler implements IDownloadHandler {
 
 	public ReadableBook downloadBook(DownloadActivity context,
-			EverliveApp everlive, DownloadableBook bookToDownload) {
+			String url, DownloadableBook bookToDownload) {
 
-		DownloadTask task = new DownloadTask(context, everlive, bookToDownload);
+		DownloadTask task = new DownloadTask(context, url, bookToDownload);
 		task.downloadTheBook();
 
 		return new ReadableBook(Environment.getExternalStorageDirectory()
@@ -35,28 +35,20 @@ public class DownloadHandler implements IDownloadHandler {
 
 	private class DownloadTask extends AsyncTask<String, Integer, String> {
 
-		private DownloadActivity context;
+		private DownloadActivity mContext;
 		private PowerManager.WakeLock mWakeLock;
-		private DownloadableBook bookToDownload;
-		private EverliveApp everlive;
+		private DownloadableBook mBookToDownload;
+		private String mUrl;
 
-		public DownloadTask(DownloadActivity context, EverliveApp everlive,
+		public DownloadTask(DownloadActivity context, String url,
 				DownloadableBook bookToDownload) {
-			this.context = context;
-			this.everlive = everlive;
-			this.bookToDownload = bookToDownload;
-		}
-
-		public String getDownloadLink(UUID fileId) {
-			//return this.everlive.workWith().files().getFileDownloadUrl(fileId);
-			// TODO - Fix this shit!
-			
-			return "";
+			this.mContext = context;
+			this.mBookToDownload = bookToDownload;
+			this.mUrl = url;
 		}
 
 		public String downloadTheBook() {
-			return this.doInBackground(this
-					.getDownloadLink(this.bookToDownload.Book));
+			return this.doInBackground(this.mUrl);
 		}
 
 		@Override
@@ -86,7 +78,7 @@ public class DownloadHandler implements IDownloadHandler {
 				output = new FileOutputStream(Environment
 						.getExternalStorageDirectory().getPath()
 						+ "/read0r/"
-						+ this.bookToDownload.fileName);
+						+ this.mBookToDownload.fileName);
 
 				byte data[] = new byte[4096];
 				long total = 0;
@@ -119,7 +111,7 @@ public class DownloadHandler implements IDownloadHandler {
 				if (connection != null)
 					connection.disconnect();
 			}
-			context.onBookDownloaded(bookToDownload);
+			mContext.onBookDownloaded(mBookToDownload);
 			return null;
 		}
 	}

@@ -22,30 +22,30 @@ import com.telerik.everlive.sdk.core.facades.special.CreateFileFacade;
 
 public class DocumentReader implements IDocumentReader {
 
-	private ReadableBook document;
+	private ReadableBook mDocument;
 
-	private int portionSize;
-	private int lastPosition;
-	private boolean endReached;
+	private int mPortionSize;
+	private int mLastPosition;
+	private boolean mEndReached;
 
-	private Context context;
+	private Context mContext;
 
-	private boolean skipSDCardCheck = false;
+	private boolean mSkipSDCardCheck = false;
 
 	public DocumentReader(ReadableBook document, Context context) {
-		this.context = context;
-		this.document = document;
-		this.lastPosition = 0;
-		this.portionSize = 2000;
-		this.endReached = false;
+		this.mContext = context;
+		this.mDocument = document;
+		this.mLastPosition = 0;
+		this.mPortionSize = 2000;
+		this.mEndReached = false;
 	}
 
 	public int getCurrentPosition() {
-		return lastPosition;
+		return mLastPosition;
 	}
 
 	public void setPortionSize(int portionSize) {
-		this.portionSize = portionSize;
+		this.mPortionSize = portionSize;
 	}
 
 	private int addWordsOfStringToCollection(String textPartition,
@@ -70,22 +70,22 @@ public class DocumentReader implements IDocumentReader {
 
 		FileInputStream fis = null;
 		String readString = null;
-		if (isSDcardAvailable() || this.skipSDCardCheck) {
+		if (isSDcardAvailable() || this.mSkipSDCardCheck) {
 			try {
-				fis = context.openFileInput(this.document.fileAddress);
+				fis = mContext.openFileInput(this.mDocument.fileAddress);
 				InputStreamReader isr = new InputStreamReader(fis);
 
 				// Skipping to the index...
 				isr.skip(letterIndex);
 
 				// The actual reading
-				char[] inputBuffer = new char[this.portionSize];
+				char[] inputBuffer = new char[this.mPortionSize];
 				int charsReaded = isr.read(inputBuffer);
 				String portion = new String(inputBuffer);
 
 				// if end reached
-				if (charsReaded < this.portionSize) {
-					this.endReached = true;
+				if (charsReaded < this.mPortionSize) {
+					this.mEndReached = true;
 					portion += " ";
 				}
 
@@ -93,7 +93,7 @@ public class DocumentReader implements IDocumentReader {
 						result);
 
 				// Saving progress
-				this.lastPosition = letterIndex + charsThatCount;
+				this.mLastPosition = letterIndex + charsThatCount;
 
 				fis.close();
 				isr.close();
@@ -116,18 +116,18 @@ public class DocumentReader implements IDocumentReader {
 	}
 
 	public boolean endReached() {
-		return this.endReached;
+		return this.mEndReached;
 	}
 
 	@Override
 	public long getDocLength() {
-		if (this.document.length == 0) {
-			File file = new File(this.document.fileAddress);
+		if (this.mDocument.length == 0) {
+			File file = new File(this.mDocument.fileAddress);
 			if (file.exists()) {
 				return file.length();
 			}
 			return 0;
 		}
-		return this.document.length;
+		return this.mDocument.length;
 	}
 }

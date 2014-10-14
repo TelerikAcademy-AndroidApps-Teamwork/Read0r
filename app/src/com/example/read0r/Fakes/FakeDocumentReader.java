@@ -8,36 +8,36 @@ import com.example.read0r.Interfaces.IDocumentReader;
 
 public class FakeDocumentReader implements IDocumentReader {
 
-	private String text = "That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test. That's just a test. It's just a test. Making a test. Testing this test.";
+	private String mText = "Бавно ни залива морето от сиви тягостни дни, умът не слуша сърцето, а вечно смята и бди. Падаме в калта затъваме до шия в нея, виновни търсим за да успеем невинни в калта да заспим. Хората сега са глупави стада, водещи борба за власт и за трева, стискайки зъби подават си ръка. Не, аз не мога да спя сега! Аз сам си избрах тази съдба, вечната черна овца! вечната черна овца! Всяка глупост има си време, да стане малка правда дори, щом овчарят може да дреме, а стадото да точи зъби. Злото ви поглъща с грозната си паст, никой не посмя да чуе моя глас, браните с рогца жалката си власт. Не, аз не мога да съм като вас! Аз сам си избрах тази съдба, вечната черна овца! вечната черна овца! вечната черна овца! вечната черна овца! Сложил бях на карта сетния си час, никой не посмя да чуе моя глас, черен съм сега и в профил и в анфас. Не, аз не мога да съм като вас! Аз сам си избрах тази съдба, вечната черна овца! вечната черна овца! вечната черна овца! вечната черна овца! вечната черна овца! вечната черна овца! ";
 
-	private int portionSize;
-	private int position;
+	private int mPortionSize;
+	private int mPosition;
 
 	@Override
 	public int getCurrentPosition() {
-		return this.position;
+		return this.mPosition;
 	}
 
 	@Override
 	public boolean endReached() {
-		return this.endReached();
+		return this.mPosition >= this.getDocLength();
 	}
 
 	@Override
 	public void setPortionSize(int portionSize) {
-		this.portionSize = portionSize;
+		this.mPortionSize = portionSize;
 	}
 
 	@Override
 	public List<String> getNextWordPortion(int letterIndex) {
 		ArrayList<String> results = new ArrayList<String>();
-		int len = this.text.length() - letterIndex;
-		if (len > this.portionSize) {
-			len = this.portionSize;
+		int len = this.mText.length() - letterIndex;
+		if (len > this.mPortionSize) {
+			len = this.mPortionSize;
 		}
 		int charsCount = addWordsOfStringToCollection(
-				this.text.substring(letterIndex, len), results);
-		this.position = letterIndex + charsCount;
+				this.mText.substring(letterIndex, letterIndex + len), results);
+		this.mPosition = letterIndex + charsCount;
 		return results;
 	}
 
@@ -55,7 +55,7 @@ public class FakeDocumentReader implements IDocumentReader {
 
 	@Override
 	public long getDocLength() {
-		return this.text.length();
+		return this.mText.length();
 	}
 
 }

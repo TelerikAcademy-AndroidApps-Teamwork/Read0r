@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:drawableLeft="@drawable/back"
+            android:drawableLeft="@drawable/stop"
             android:text="@string/StopBtn" />
 
         <Button
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:drawableLeft="@drawable/stop"
+            android:drawableLeft="@drawable/tag"
             android:text="@string/PauseBtn" />
     </LinearLayout>
 
@@ -50,7 +50,7 @@
         android:layout_below="@+id/read_titleView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
-        android:text="&lt;12%>"
+        android:text="&lt;progress>"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView

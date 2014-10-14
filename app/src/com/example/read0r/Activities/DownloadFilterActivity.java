@@ -22,31 +22,38 @@ import android.widget.LinearLayout;
 public class DownloadFilterActivity extends ActionBarActivity implements
 		OnClickListener {
 
-	private Intent backIntent;
-	private int theme;
-	private ArrayList<String> filters;
-	private Button backBtn;
-	private Button filterBtn;
-	private ArrayList<String> categories;
-	private LinearLayout categoriesList;
+	private Intent mBackIntent;
+	private int mTheme;
+	private ArrayList<String> mFilters;
+	private Button mBackBtn;
+	private Button mFilterBtn;
+	private ArrayList<String> mCategories;
+	private LinearLayout mCategoriesList;
+	private ArrayList<String> mOriginFilters;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download_filter);
 
-		this.backIntent = new Intent(DownloadFilterActivity.this,
+		this.mBackIntent = new Intent(DownloadFilterActivity.this,
 				DownloadActivity.class);
 
-		this.theme = this.getResources().getInteger(R.integer.theme);
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
 
-		this.backBtn = (Button) this.findViewById(R.id.filter_backButton);
-		this.filterBtn = (Button) this.findViewById(R.id.filter_filterButton);
+		this.mBackBtn = (Button) this.findViewById(R.id.filter_backButton);
+		this.mFilterBtn = (Button) this.findViewById(R.id.filter_filterButton);
 
-		this.categoriesList = (LinearLayout) this.findViewById(R.id.filter_categoriesList);
-		
-		this.backBtn.setOnClickListener(this);
-		this.filterBtn.setOnClickListener(this);
+		this.mCategoriesList = (LinearLayout) this
+				.findViewById(R.id.filter_categoriesList);
+
+		this.mBackBtn.setOnClickListener(this);
+		this.mFilterBtn.setOnClickListener(this);
+
+		if (this.getIntent().hasExtra("filters")) {
+			this.mOriginFilters = (ArrayList<String>) this.getIntent()
+					.getExtras().get("filters");
+		}
 
 		this.applyTheme();
 		this.initFilters();
@@ -58,46 +65,45 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 	}
 
 	private void initFilters() {
-		if (this.getIntent().hasExtra("filters")) {
-			this.filters = (ArrayList<String>) this.getIntent().getExtras()
-					.get("filters");
-		} else {
-			this.filters = new ArrayList<String>();
+		this.mFilters = new ArrayList<String>();
+		for (String string : mOriginFilters) {
+			this.mFilters.add(string);
 		}
 
 		if (this.getIntent().hasExtra("categories")) {
-			this.categories = (ArrayList<String>) this.getIntent().getExtras()
+			this.mCategories = (ArrayList<String>) this.getIntent().getExtras()
 					.get("categories");
 		} else {
-			this.categories = new ArrayList<String>();
+			this.mCategories = new ArrayList<String>();
 		}
 	}
 
 	private void drawFilters() {
-		this.categoriesList.removeAllViews();
-		
-		for (int i = 0; i < this.categories.size(); i++) {
-			String cat = this.categories.get(i);
+		this.mCategoriesList.removeAllViews();
+
+		for (int i = 0; i < this.mCategories.size(); i++) {
+			String cat = this.mCategories.get(i);
 			CheckBox cb = new CheckBox(this);
 			cb.setText(cat);
-			for (String filt : this.filters) {
+			for (String filt : this.mFilters) {
 				if (filt.equals(cat)) {
 					cb.setChecked(true);
 				}
 			}
-			
+
 			cb.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					CheckBox chb = (CheckBox)v;
+					CheckBox chb = (CheckBox) v;
 					if (chb.isChecked()) {
-						filters.add(chb.getText().toString());
+						mFilters.add(chb.getText().toString());
 					} else {
-						filters.remove(filters.indexOf(chb.getText().toString()));
+						mFilters.remove(mFilters
+								.indexOf(chb.getText().toString()));
 					}
 				}
 			});
-			
-			this.categoriesList.addView(cb);
+
+			this.mCategoriesList.addView(cb);
 		}
 	}
 
@@ -121,17 +127,15 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 	}
 
 	public void goBackSave() {
-		this.backIntent.putExtra("filters", this.filters);
-
-		this.startActivity(this.backIntent);
+		this.mBackIntent.putExtra("filters", this.mFilters);
 
 		if (getParent() == null) {
-			setResult(Activity.RESULT_OK, this.backIntent);
+			setResult(Activity.RESULT_OK, this.mBackIntent);
 		} else {
-			getParent().setResult(Activity.RESULT_OK, this.backIntent);
+			getParent().setResult(Activity.RESULT_OK, this.mBackIntent);
 		}
 
-		finish();
+		this.finish();
 	}
 
 	public void goBackCancel() {

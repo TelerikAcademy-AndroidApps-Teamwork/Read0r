@@ -1,6 +1,7 @@
 package com.example.read0r.Views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.example.read0r.Activities.DownloadActivity;
@@ -28,27 +29,31 @@ import android.widget.Toast;
 public class DownloadableBooksWidget extends View implements OnGestureListener,
 		OnScaleGestureListener {
 
-	private List<DownloadableBook> books;
-	private List<DownloadableBook> curentPage;
-	private int pageNumber;
-	private int pageSize = 3;
-	private boolean pageChanged = true;
+	private List<DownloadableBook> mBooks;
+	private List<DownloadableBook> mCurentPage;
+	private int mPageNumber;
+	private int mPageSize = 3;
+	private boolean mPageChanged = true;
+	private boolean mInitialized = false;
 
-	private int width;
-	private int height;
-	private Paint ownedBookPaint;
-	private Paint newBookPaint;
-	private Paint textPaint;
-	private int viewPortion;
-	private Path titlePath;
-	private int countOfLines;
-	private boolean initialized = false;
-	private int selectedIndex;
-	private int itemHeight;
-	private Paint selectedBookPaint;
-	private int minItemHeight;
-	private GestureDetector guestureDetector;
-	private ScaleGestureDetector scaleDetector;
+	private int mWidth;
+	private int mHeight;
+
+	private int mSelectedIndex;
+	private int mItemHeight;
+	private int mViewPortion;
+	private int mCountOfLines;
+
+	private Path mTitlePath;
+	private GestureDetector mGuestureDetector;
+	private ScaleGestureDetector mScaleDetector;
+
+	private Paint mOwnedBookPaint;
+	private Paint mNewBookPaint;
+	private Paint mTextPaint;
+	private Paint mSelectedBookPaint;
+	private Date mDateOfLastTap;
+	private long mMillisecondsBetweenClicks = 500;
 
 	public DownloadableBooksWidget(Context context) {
 		this(context, null);
@@ -64,109 +69,109 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 		this.setBooks(new ArrayList<DownloadableBook>());
 		this.getBooks().add(new DownloadableBook("", "", "", 1, ""));
 
-		this.ownedBookPaint = new Paint();
-		this.ownedBookPaint.setColor(Color.LTGRAY);
-		this.newBookPaint = new Paint();
-		this.newBookPaint.setColor(Color.GREEN);
-		this.textPaint = new Paint();
-		this.textPaint.setColor(Color.BLACK);
-		this.selectedBookPaint = new Paint();
-		this.selectedBookPaint.setColor(Color.BLACK);
+		this.mOwnedBookPaint = new Paint();
+		this.mOwnedBookPaint.setColor(Color.LTGRAY);
+		this.mNewBookPaint = new Paint();
+		this.mNewBookPaint.setColor(Color.GREEN);
+		this.mTextPaint = new Paint();
+		this.mTextPaint.setColor(Color.BLACK);
+		this.mSelectedBookPaint = new Paint();
+		this.mSelectedBookPaint.setColor(Color.BLACK);
 
-		this.countOfLines = 10;
-		this.selectedIndex = 0;
+		this.mCountOfLines = 10;
+		this.mSelectedIndex = 0;
 
-		this.guestureDetector = new GestureDetector(this.getContext(), this);
-		this.scaleDetector = new ScaleGestureDetector(this.getContext(), this);
-
+		this.mGuestureDetector = new GestureDetector(this.getContext(), this);
+		this.mScaleDetector = new ScaleGestureDetector(this.getContext(), this);
 	}
 
 	@Override
 	public void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
-		this.width = Math.abs(left - right);
-		this.height = Math.abs(top - bottom);
+		this.mWidth = Math.abs(left - right);
+		this.mHeight = Math.abs(top - bottom);
 
 		super.onLayout(changed, left, top, right, bottom);
 
-		this.viewPortion = this.width / 10;
-		this.itemHeight = Math.max(this.height / 3, this.width / 10 * 2);
+		this.mViewPortion = this.mWidth / 10;
+		this.mItemHeight = this.mHeight / 3;
 
-		if (changed || this.initialized) {
-			this.initialized = true;
-			this.titlePath = new Path();
-			this.titlePath.moveTo(viewPortion, viewPortion);
-			this.titlePath.lineTo(this.width / 2, (float) (viewPortion * 1.3));
-			this.titlePath.lineTo(this.width, viewPortion);
+		if (changed || this.mInitialized) {
+			this.mInitialized = true;
+			this.mTitlePath = new Path();
+			this.mTitlePath.moveTo(mViewPortion, mViewPortion);
+			this.mTitlePath.lineTo(this.mWidth / 2,
+					(float) (mViewPortion * 1.3));
+			this.mTitlePath.lineTo(this.mWidth, mViewPortion);
 		}
 	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
 
-		if (this.pageChanged) {
+		if (this.mPageChanged) {
 			setCurrentPage();
 		}
 
 		super.onDraw(canvas);
-		for (int i = 0; i < this.curentPage.size(); i++) {
+		for (int i = 0; i < this.mCurentPage.size(); i++) {
 
-			DownloadableBook book = curentPage.get(i);
-			int currentTop = i * this.itemHeight;
+			DownloadableBook book = mCurentPage.get(i);
+			int currentTop = i * this.mItemHeight;
 
 			if (book.isOwned) {
-				canvas.drawRect(0, currentTop + 1, this.width, currentTop
-						+ this.itemHeight - 1, this.ownedBookPaint);
+				canvas.drawRect(0, currentTop + 1, this.mWidth, currentTop
+						+ this.mItemHeight - 1, this.mOwnedBookPaint);
 			} else {
-				canvas.drawRect(0, currentTop + 1, this.width, currentTop
-						+ this.itemHeight - 1, this.newBookPaint);
+				canvas.drawRect(0, currentTop + 1, this.mWidth, currentTop
+						+ this.mItemHeight - 1, this.mNewBookPaint);
 			}
 
-			if (this.selectedIndex == i) {
-				for (int ln = 1; ln <= countOfLines; ln++) {
-					int currentLen = viewPortion / countOfLines * ln;
+			if (this.mSelectedIndex == i) {
+				for (int ln = 1; ln <= mCountOfLines; ln++) {
+					int currentLen = mViewPortion / mCountOfLines * ln;
 
 					if (book.isOwned) {
 						canvas.drawLine(0, currentTop + currentLen, currentLen,
-								currentTop, this.selectedBookPaint);
+								currentTop, this.mSelectedBookPaint);
 					} else {
 						canvas.drawLine(0, currentTop + currentLen, currentLen,
-								currentTop, this.selectedBookPaint);
+								currentTop, this.mSelectedBookPaint);
 					}
 				}
 			}
-			int fontSize = determineMaxTextSize(book, this.width
-					- this.viewPortion * 2);
-			this.textPaint.setTextSize(fontSize);
+			int fontSize = determineMaxTextSize(book, this.mWidth
+					- this.mViewPortion * 2);
+			this.mTextPaint.setTextSize(fontSize);
 
-			canvas.drawTextOnPath(book.title, this.titlePath, 0, currentTop,
-					this.textPaint);
-			canvas.drawText(getAuthorPagesAndCategory(book), this.viewPortion,
-					currentTop + this.itemHeight - (fontSize / 2),
-					this.textPaint);
+			canvas.drawTextOnPath(book.title, this.mTitlePath, 0, currentTop,
+					this.mTextPaint);
+			canvas.drawText(getAuthorPagesAndCategory(book), this.mViewPortion,
+					currentTop + this.mItemHeight - (fontSize / 2),
+					this.mTextPaint);
 		}
 	}
 
 	private void setCurrentPage() {
-		this.pageChanged = false;
-		this.curentPage = new ArrayList<DownloadableBook>();
+		this.mPageChanged = false;
+		this.mCurentPage = new ArrayList<DownloadableBook>();
 
-		int i = this.pageNumber * pageSize;
-		int len = Math.min(i + pageSize, this.books.size());
+		int i = this.mPageNumber * mPageSize;
+		int len = Math.min(i + mPageSize, this.mBooks.size());
 		while (i < len) {
-			this.curentPage.add(this.books.get(i));
+			this.mCurentPage.add(this.mBooks.get(i));
 			i++;
 		}
 
 		DownloadActivity da = (DownloadActivity) this.getContext();
 		if (da != null) {
-			int itemsOnPage = this.pageNumber * pageSize + 1;
+			int itemsOnPage = this.mPageNumber * mPageSize + 1;
 			if (len == 0) {
 				itemsOnPage = 0;
 			}
 
 			da.updatePageCounter("(" + itemsOnPage + "-" + len + ") of "
-					+ this.books.size());
+					+ this.mBooks.size());
 		}
 	}
 
@@ -191,16 +196,16 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public List<DownloadableBook> getBooks() {
-		return this.books;
+		return this.mBooks;
 	}
 
 	public void setBooks(List<DownloadableBook> books) {
-		this.books = books;
-		this.pageNumber = 0;
+		this.mBooks = books;
+		this.mPageNumber = 0;
 	}
 
 	public void selectAt(float f) {
-		this.selectedIndex = ((int) f) / this.itemHeight;
+		this.mSelectedIndex = ((int) f) / this.mItemHeight;
 		this.invalidate();
 	}
 
@@ -214,26 +219,26 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	private void goPageUp() {
-		if (this.pageNumber > 0) {
-			this.pageNumber--;
-			this.pageChanged = true;
+		if (this.mPageNumber > 0) {
+			this.mPageNumber--;
+			this.mPageChanged = true;
 			this.invalidate();
 		}
 	}
 
 	private void goPageDown() {
-		if ((this.pageNumber + 1) * pageSize < this.books.size()) {
-			this.pageNumber++;
-			this.pageChanged = true;
+		if ((this.mPageNumber + 1) * mPageSize < this.mBooks.size()) {
+			this.mPageNumber++;
+			this.mPageChanged = true;
 			this.invalidate();
 		}
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		boolean simpleGuestureHandled = this.guestureDetector
+		boolean simpleGuestureHandled = this.mGuestureDetector
 				.onTouchEvent(event);
-		boolean scaleGuestureHandled = this.scaleDetector.onTouchEvent(event);
+		boolean scaleGuestureHandled = this.mScaleDetector.onTouchEvent(event);
 		return simpleGuestureHandled || scaleGuestureHandled;
 	}
 
@@ -258,6 +263,15 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 	}
 
 	public boolean onSingleTapUp(MotionEvent e) {
+		if (this.mDateOfLastTap != null) {
+			long timeSpan = new Date().getTime() - mDateOfLastTap.getTime();
+			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks) {
+				this.onLongPress(e);
+				this.mDateOfLastTap = null;
+				return true;
+			}
+		}
+		this.mDateOfLastTap = new Date();
 		return false;
 	}
 
@@ -268,12 +282,12 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 
 	public void onLongPress(MotionEvent e) {
 		DownloadableBook selectedBook;
-		if (e.getY() < this.width / 3) {
-			selectedBook = this.books.get(this.pageNumber * pageSize);
-		} else if (e.getY() < this.width / 3 * 2) {
-			selectedBook = this.books.get(this.pageNumber * pageSize + 1);
+		if (e.getY() < this.mItemHeight) {
+			selectedBook = this.mCurentPage.get(0);
+		} else if (e.getY() < this.mItemHeight * 2) {
+			selectedBook = this.mCurentPage.get(1);
 		} else {
-			selectedBook = this.books.get(this.pageNumber * pageSize + 2);
+			selectedBook = this.mCurentPage.get(2);
 		}
 
 		if (selectedBook != null) {
