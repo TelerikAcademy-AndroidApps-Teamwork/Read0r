@@ -6,8 +6,16 @@ import com.example.read0r.R.layout;
 import com.example.read0r.R.menu;
 
 import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+@SuppressLint("NewApi")
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends ActionBarActivity implements
 		OnClickListener {
 
@@ -58,10 +68,10 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	private void loadSettings() {
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
-		this.mFontSize = this.getResources().getInteger(R.integer.fontSize);
-		this.mSpeedPercent = this.getResources().getInteger(
-				R.integer.speedPercent);
+
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
+		this.mFontSize = com.example.read0r.Settings.getFontSize(this);
+		this.mSpeedPercent = com.example.read0r.Settings.getReadingSpeed(this);
 	}
 
 	private void applyTheme() {
@@ -69,8 +79,8 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	private void displaySettings() {
-		this.mFontInput.setText(this.mFontSize);
-		this.mSpeedInput.setText(this.mSpeedPercent);
+		this.mFontInput.setText(this.mFontSize + "");
+		this.mSpeedInput.setText(this.mSpeedPercent + "");
 
 		if (this.mTheme == Color.WHITE) {
 			this.mDarkThemeRadio.setChecked(false);
@@ -105,8 +115,40 @@ public class SettingsActivity extends ActionBarActivity implements
 	}
 
 	public void saveSettings() {
-		this.getResources();
+		this.mFontSize = Integer.parseInt(this.mFontInput.getText().toString());
+		this.mSpeedPercent = Integer.parseInt(this.mSpeedInput.getText()
+				.toString());
+
+		boolean settingsCommited = true;
+		settingsCommited = com.example.read0r.Settings.setFontSize(this,
+				this.mFontSize);
+		settingsCommited = settingsCommited
+				&& com.example.read0r.Settings.setReadingSpeed(this,
+						this.mSpeedPercent);
+		settingsCommited = settingsCommited
+				&& com.example.read0r.Settings.setTheme(this, this.mTheme);
+
+		if (!settingsCommited) {
+			showNotification("Read0r settings were not saved",
+					"There was a problem saving your settings",
+					R.id.notificationId_settingsError);
+		}
+
 		this.goBack();
+	}
+
+	private void showNotification(String title, String content,
+			int notificationidId) {
+		Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.attention);
+		Notification.Builder builder = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.attention)
+				.setLargeIcon(
+						Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
+				.setContentTitle(title).setContentText(content);
+		Notification notification = builder.build();
+		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+				.notify(notificationidId, notification);
 	}
 
 	private void changeTheme(int color) {

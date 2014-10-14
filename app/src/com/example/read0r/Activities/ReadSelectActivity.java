@@ -31,8 +31,8 @@ public class ReadSelectActivity extends ActionBarActivity implements OnClickList
 		
 		this.mReadIntent = new Intent(ReadSelectActivity.this,
 				ReadActivity.class);
-		
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
+
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
 
 		this.mBackBtn = (Button) this.findViewById(R.id.select_backButton);
 		this.mReadBtn = (Button) this.findViewById(R.id.select_readButton);

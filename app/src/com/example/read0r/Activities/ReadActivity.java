@@ -15,6 +15,7 @@ import com.example.read0r.Read0rWord;
 import com.example.read0r.Read0rQueue;
 
 import android.support.v7.app.ActionBarActivity;
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -23,6 +24,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -46,7 +50,7 @@ import android.widget.Toast;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 @SuppressLint("NewApi")
 public class ReadActivity extends ActionBarActivity implements
-		OnGestureListener, OnScaleGestureListener {
+		OnGestureListener, OnScaleGestureListener, SensorEventListener {
 
 	private GestureDetector guestureDetector;
 	private ScaleGestureDetector scaleDetector;
@@ -78,13 +82,22 @@ public class ReadActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read);
 
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
-		this.mFontSize = this.getResources().getInteger(R.integer.fontSize);
-		this.mSpeedPercent = this.getResources().getInteger(
-				R.integer.speedPercent);
+		loadSettings();
+		loadBookInformation();
 
+		this.guestureDetector = new GestureDetector(this, this);
+		this.scaleDetector = new ScaleGestureDetector(this, this);
+
+		handleUI();
+		initQueueHandler();
+		this.applyTheme();
+
+		this.mPaused = true;
+		mPauseBtn.setText("Start");
+	}
+
+	private void loadBookInformation() {
 		int bookId = this.getIntent().getExtras().getInt("book_id");
-
 		boolean localDataIsFake = this.getResources().getBoolean(
 				R.bool.useFakeLocalData);
 
@@ -93,12 +106,34 @@ public class ReadActivity extends ActionBarActivity implements
 		} else {
 			this.mLocalDataHandler = new Read0rLocalData();
 		}
-
 		this.mBookToRead = this.mLocalDataHandler.getBookById(bookId);
+	}
 
-		this.guestureDetector = new GestureDetector(this, this);
-		this.scaleDetector = new ScaleGestureDetector(this, this);
+	private void loadSettings() {
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
+		this.mFontSize = com.example.read0r.Settings.getFontSize(this);
+		this.mSpeedPercent = com.example.read0r.Settings.getReadingSpeed(this);
+	}
 
+	private void initQueueHandler() {
+		Read0rQueue queue = new Read0rQueue();
+		IDocumentReader reader;
+		boolean docReaderIsFake = this.getResources().getBoolean(
+				R.bool.useFakeDocReader);
+
+		if (docReaderIsFake) {
+			reader = new FakeDocumentReader();
+		} else {
+			reader = new DocumentReader(mBookToRead, this);
+		}
+
+		this.mQueueHandler = new Read0rQueueHandler(queue, reader);
+		this.mQueueHandler.onCreate();
+		this.mQueueHandler.onStart(new Intent(this, Read0rQueueHandler.class),
+				1);
+	}
+
+	private void handleUI() {
 		this.mStopBtn = (Button) this.findViewById(R.id.read_stopButton);
 		this.mPauseBtn = (Button) this.findViewById(R.id.read_pauseButton);
 		this.mWordView = (TextView) this.findViewById(R.id.read_word);
@@ -136,27 +171,6 @@ public class ReadActivity extends ActionBarActivity implements
 				return simpleGuestureHandled || scaleGuestureHandled;
 			}
 		});
-
-		Read0rQueue queue = new Read0rQueue();
-		IDocumentReader reader;
-		boolean docReaderIsFake = this.getResources().getBoolean(
-				R.bool.useFakeDocReader);
-
-		if (docReaderIsFake) {
-			reader = new FakeDocumentReader();
-		} else {
-			reader = new DocumentReader(mBookToRead, this);
-		}
-
-		this.mQueueHandler = new Read0rQueueHandler(queue, reader);
-		this.mQueueHandler.onCreate();
-		this.mQueueHandler.onStart(new Intent(this, Read0rQueueHandler.class),
-				1);
-
-		this.applyTheme();
-
-		this.mPaused = true;
-		mPauseBtn.setText("Start");
 	}
 
 	private void updateFontSize() {
@@ -286,6 +300,8 @@ public class ReadActivity extends ActionBarActivity implements
 
 	private void onBoastOnFaceBookChoice(boolean boastOnFaceBook) {
 		if (boastOnFaceBook) {
+			// this.mFb = new Facebook();
+
 			showNotification("Facebook boasting canceled",
 					"Facebook boasting is not yet implemented.",
 					R.id.notificationId_facebook);
@@ -433,5 +449,30 @@ public class ReadActivity extends ActionBarActivity implements
 			this.mQueueHandler.goBack();
 		}
 		return true;
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+			Toast.makeText(getApplicationContext(), "working",
+					Toast.LENGTH_SHORT).show();
+			float distanceSm = event.values[0];
+			if (distanceSm < 20) {
+				if (!this.mPaused) {
+					this.pauseReading();
+				}
+
+				Toast.makeText(
+						this,
+						"Please do not read from so close. It can be bad for your eyes.",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 }

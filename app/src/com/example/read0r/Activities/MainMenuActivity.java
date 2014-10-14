@@ -46,8 +46,8 @@ public class MainMenuActivity extends ActionBarActivity implements OnClickListen
 		this.mDownloadBtn.setOnClickListener(this);
 		this.mSettingsBtn.setOnClickListener(this);
 		this.mQuitBtn.setOnClickListener(this);
-		
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
+
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
 		
 		this.applyTheme();
 	}

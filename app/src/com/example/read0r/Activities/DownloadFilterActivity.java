@@ -39,7 +39,7 @@ public class DownloadFilterActivity extends ActionBarActivity implements
 		this.mBackIntent = new Intent(DownloadFilterActivity.this,
 				DownloadActivity.class);
 
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
 
 		this.mBackBtn = (Button) this.findViewById(R.id.filter_backButton);
 		this.mFilterBtn = (Button) this.findViewById(R.id.filter_filterButton);

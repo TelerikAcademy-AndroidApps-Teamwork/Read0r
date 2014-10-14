@@ -78,7 +78,8 @@ public class DownloadActivity extends ActionBarActivity {
 		this.mDownloadFilterIntent = new Intent(DownloadActivity.this,
 				DownloadFilterActivity.class);
 
-		this.mTheme = this.getResources().getInteger(R.integer.theme);
+		this.mTheme = com.example.read0r.Settings.getTheme(this);
+		
 		boolean distantDataIsFake = this.getResources().getBoolean(
 				R.bool.useFakeDistantData);
 		boolean localDataIsFake = this.getResources().getBoolean(

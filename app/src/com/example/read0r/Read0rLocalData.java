@@ -56,7 +56,7 @@ public class Read0rLocalData extends OrmLiteBaseActivity<DatabaseHelper> impleme
 	
 	@Override
 	public void updateBook(ReadableBook book) {
-		// TODO: Implement me!
+		noteDao.update(book);
 	}
 }
 
