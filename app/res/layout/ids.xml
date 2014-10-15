@@ -19,7 +19,12 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/notificationId_facebook"
+        android:id="@+id/notificationId_twitterError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/notificationId_twitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

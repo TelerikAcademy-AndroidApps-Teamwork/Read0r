@@ -26,12 +26,16 @@ import android.R.integer;
 import android.R.string;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -304,4 +308,38 @@ public class DownloadActivity extends ActionBarActivity {
 				.notify(R.id.finishedDownloadNotifivation_id, notification);
 	}
 
+	public void checkConnectivity() {
+		  ConnectivityManager cm = (ConnectivityManager) this
+		    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		  NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		  boolean isConnected = activeNetwork != null
+		    && activeNetwork.isConnectedOrConnecting();
+		  if (!isConnected) {
+			  
+		   AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		   builder.setCancelable(true);
+		   builder.setTitle("No internet connection.");
+		   builder.setInverseBackgroundForced(true);
+		   builder.setNegativeButton("Yes",
+		     new DialogInterface.OnClickListener() {
+		      @Override
+		      public void onClick(DialogInterface dialog, int which) {
+		       dialog.dismiss();
+		       finish();
+		      }
+		     });
+		   builder.setNegativeButton("No",
+		     new DialogInterface.OnClickListener() {
+		      @Override
+		      public void onClick(DialogInterface dialog, int which) {
+		       dialog.dismiss();
+		      }
+		     });
+
+		   AlertDialog alert = builder.create();
+		   alert.setMessage("The download section is useless without internet connection.\nDo you want to go back?");
+		   alert.show();
+		  }
+		 }
 }

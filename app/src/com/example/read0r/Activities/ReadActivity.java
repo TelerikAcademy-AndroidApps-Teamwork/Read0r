@@ -2,6 +2,16 @@ package com.example.read0r.Activities;
 
 import java.util.Date;
 
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
+
 import com.example.read0r.DocumentReader;
 import com.example.read0r.R;
 import com.example.read0r.Fakes.FakeDocumentReader;
@@ -27,6 +37,7 @@ import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -76,6 +87,29 @@ public class ReadActivity extends ActionBarActivity implements
 	private TextView mTitleView;
 	private ReadableBook mBookToRead;
 	private PopupWindow mPopup;
+
+	private static Twitter twitter;
+	private static RequestToken requestToken;
+
+	private String TWITTER_CONSUMER_KEY = "2W8bYiAtb4RY66HWXAVYJ4SIo";
+	private String TWITTER_CONSUMER_SECRET = "LpgZyYXQ84NJ35TeeYkiFxSWwNRWpHbE7kBLaGuEuadZLF7oFM";
+
+	// Preference Constants
+	private String PREFERENCE_NAME = "twitter_oauth";
+	private String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+	private String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+	private String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+
+	private String TWITTER_CALLBACK_URL = "oauth://t4jsample";
+
+	private String USER_TOKEN = "";
+	private String USER_SECRET = "";
+
+	private String URL_TWITTER_AUTH = "auth_url";
+	private String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
+	private String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
+	
+	private boolean twitterLoggedIn = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +278,7 @@ public class ReadActivity extends ActionBarActivity implements
 						+ this.mBookToRead.author,
 				R.id.notificationId_finishedBook);
 
-		askToBoastOnFaceBook();
+		askToBoastOnline();
 	}
 
 	private void showNotification(String title, String content,
@@ -261,7 +295,7 @@ public class ReadActivity extends ActionBarActivity implements
 				.notify(notificationidId, notification);
 	}
 
-	private void askToBoastOnFaceBook() {
+	private void askToBoastOnline() {
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -275,7 +309,7 @@ public class ReadActivity extends ActionBarActivity implements
 
 		((TextView) popupContainer.getChildAt(0)).setText("The book has ended");
 		((TextView) popupContainer.getChildAt(1))
-				.setText("Do you want to boast on facebook about it");
+				.setText("Do you want to tweet in twitter about it");
 
 		Button Ok = (Button) ((ViewGroup) popupContainer.getChildAt(2))
 				.getChildAt(0);
@@ -286,25 +320,53 @@ public class ReadActivity extends ActionBarActivity implements
 			@Override
 			public void onClick(View v) {
 				mPopup.dismiss();
-				onBoastOnFaceBookChoice(false);
+				onBoastOnlineChoice(false);
 			}
 		});
 		Ok.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mPopup.dismiss();
-				onBoastOnFaceBookChoice(true);
+				onBoastOnlineChoice(true);
 			}
 		});
 	}
 
-	private void onBoastOnFaceBookChoice(boolean boastOnFaceBook) {
-		if (boastOnFaceBook) {
-			// this.mFb = new Facebook();
+	private void onBoastOnlineChoice(boolean boastOnline) {
+		if (boastOnline) {
+			
+			loginToTwitter();
+			if (!twitterLoggedIn) {
+				return;
+			}
+			
+			ConfigurationBuilder cb = new ConfigurationBuilder();
+			cb.setDebugEnabled(true)
+			  .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
+			  .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
+			  .setOAuthAccessToken(USER_TOKEN)
+			  .setOAuthAccessTokenSecret(USER_SECRET);
+			TwitterFactory tf = new TwitterFactory(cb.build());
+			Twitter twitter = tf.getInstance();
+			
+			String latestStatus = "I've just read '"+ this.mBookToRead.title +"' via read0r.";
+			
+			Status status;
+			try {
+				status = twitter.updateStatus(latestStatus);
+			    String str = status.getText();
 
-			showNotification("Facebook boasting canceled",
-					"Facebook boasting is not yet implemented.",
-					R.id.notificationId_facebook);
+				showNotification("Tweet Success",
+						"Check your twitter account for more details",
+						R.id.notificationId_twitter);
+				
+			} catch (TwitterException e) {
+				e.printStackTrace();
+
+				showNotification("Tweet Failed",
+						"There was a problem in the tweet creation and/or sending",
+						R.id.notificationId_twitterError);
+			}
 		}
 		this.finish();
 	}
@@ -472,6 +534,51 @@ public class ReadActivity extends ActionBarActivity implements
 						this,
 						"Please do not read from so close. It can be bad for your eyes.",
 						Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+
+	private void loginToTwitter() {
+		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+		builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+		Configuration configuration = builder.build();
+
+		TwitterFactory factory = new TwitterFactory(configuration);
+		twitter = factory.getInstance();
+
+		try {
+			requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+			this.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+					.parse(requestToken.getAuthenticationURL())));
+		} catch (TwitterException e) {
+			e.printStackTrace();
+			showNotification("Twitter login failed",
+					"There was a problem in the twitter login",
+					R.id.notificationId_twitterError);
+			twitterLoggedIn = false;
+			return;
+		}
+		
+		Uri uri = getIntent().getData();
+		if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+			// oAuth verifier
+			String verifier = uri.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
+
+			try {
+				// Get the access token
+				AccessToken accessToken = twitter.getOAuthAccessToken(
+						requestToken, verifier);
+
+				USER_TOKEN = accessToken.getToken();
+				USER_SECRET = accessToken.getTokenSecret();
+				twitterLoggedIn = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				showNotification("Twitter login failed",
+						"There was a problem in the twitter login",
+						R.id.notificationId_twitterError);
+				twitterLoggedIn = false;
 			}
 		}
 	}
