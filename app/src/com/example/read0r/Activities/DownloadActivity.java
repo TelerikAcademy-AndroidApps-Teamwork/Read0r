@@ -79,11 +79,13 @@ public class DownloadActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download);
 
+		checkConnectivity();
+
 		this.mDownloadFilterIntent = new Intent(DownloadActivity.this,
 				DownloadFilterActivity.class);
 
 		this.mTheme = com.example.read0r.Settings.getTheme(this);
-		
+
 		boolean distantDataIsFake = this.getResources().getBoolean(
 				R.bool.useFakeDistantData);
 		boolean localDataIsFake = this.getResources().getBoolean(
@@ -110,7 +112,8 @@ public class DownloadActivity extends ActionBarActivity {
 		}
 
 		this.mBackBtn = (Button) this.findViewById(R.id.download_backButton);
-		this.mFilterBtn = (Button) this.findViewById(R.id.download_filterButton);
+		this.mFilterBtn = (Button) this
+				.findViewById(R.id.download_filterButton);
 		this.mPageCounter = (TextView) this
 				.findViewById(R.id.download_pageTrackerTextView);
 		this.mBooksWidget = (DownloadableBooksWidget) this
@@ -147,7 +150,8 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	private void updateContent() {
-		this.mContent = this.mDistantDataHandler.getFilteredBooks(this.mFilters);
+		this.mContent = this.mDistantDataHandler
+				.getFilteredBooks(this.mFilters);
 		List<ReadableBook> ownedBooks = this.mLocalDataHandler.getBooks();
 
 		for (DownloadableBook book : this.mContent) {
@@ -309,37 +313,37 @@ public class DownloadActivity extends ActionBarActivity {
 	}
 
 	public void checkConnectivity() {
-		  ConnectivityManager cm = (ConnectivityManager) this
-		    .getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) this
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		  NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		  boolean isConnected = activeNetwork != null
-		    && activeNetwork.isConnectedOrConnecting();
-		  if (!isConnected) {
-			  
-		   AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		   builder.setCancelable(true);
-		   builder.setTitle("No internet connection.");
-		   builder.setInverseBackgroundForced(true);
-		   builder.setNegativeButton("Yes",
-		     new DialogInterface.OnClickListener() {
-		      @Override
-		      public void onClick(DialogInterface dialog, int which) {
-		       dialog.dismiss();
-		       finish();
-		      }
-		     });
-		   builder.setNegativeButton("No",
-		     new DialogInterface.OnClickListener() {
-		      @Override
-		      public void onClick(DialogInterface dialog, int which) {
-		       dialog.dismiss();
-		      }
-		     });
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = activeNetwork != null;
+		isConnected = isConnected && activeNetwork.isConnectedOrConnecting();
+		
+		if (!isConnected) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setCancelable(true);
+			builder.setTitle("No internet connection.");
+			builder.setInverseBackgroundForced(true);
+			builder.setNegativeButton("Yes",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							finish();
+						}
+					});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
 
-		   AlertDialog alert = builder.create();
-		   alert.setMessage("The download section is useless without internet connection.\nDo you want to go back?");
-		   alert.show();
-		  }
-		 }
+			AlertDialog alert = builder.create();
+			alert.setMessage("The download section is useless without internet connection.\nDo you want to go back?");
+			alert.show();
+		}
+	}
 }
