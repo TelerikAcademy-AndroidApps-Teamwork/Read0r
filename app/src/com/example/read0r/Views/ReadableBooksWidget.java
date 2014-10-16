@@ -1,5 +1,6 @@
 package com.example.read0r.Views;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,12 +87,16 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 		if (localDataIsFake) {
 			this.mLocalDataHandler = new FakeLocalDataHandler();
 		} else {
-			this.mLocalDataHandler = new Read0rLocalData();
+			this.mLocalDataHandler = new Read0rLocalData(this.getContext());
 		}
 
-		this.mBooks = this.mLocalDataHandler.getBooks();
-		this.mCurrentBook = this.mBooks.size() > 0 ? this.mBooks.get(0)
-				: new ReadableBook("", "", "", 1, "", 0);
+		try {
+			this.mBooks = this.mLocalDataHandler.getBooks();
+			this.mCurrentBook = this.mBooks.size() > 0 ? this.mBooks.get(0)
+					: new ReadableBook("", "", "", 1, "", 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		this.mCurrentBookIndex = 0;
 
 		this.mGuestureDetector = new GestureDetector(this.getContext(), this);
@@ -140,23 +145,18 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 	@Override
 	public void onDraw(Canvas canvas) {
 
-		if (this.mOffset != 0) {
-			canvas.translate(this.mOffset, 0);
-
-			int drawLen = this.mWidth / 3;
-			if (this.mOffset > drawLen) {
-				selectPrevElement();
-			} else if (-this.mOffset > drawLen) {
-				selectNextElement();
-			}
+		canvas.translate(this.mOffset, 0);
+		
+		int drawLen = this.mWidth / 3;
+		if (this.mOffset > drawLen) {
+			selectPrevElement();
+		} else if (-this.mOffset > drawLen) {
+			selectNextElement();
 		}
 
-		if (mInitialized) {
-
-		}
 		if (this.mCurrentBookIndex > 0) {
-			canvas.drawRect(mPrevElementLeft, mPrevElementTop, mPrevElementRight,
-					mPrevElementBottom, mNotCurrentPaint);
+			canvas.drawRect(mPrevElementLeft, mPrevElementTop,
+					mPrevElementRight, mPrevElementBottom, mNotCurrentPaint);
 		}
 
 		canvas.drawRect(mCurrentElementLeft, mCurrentElementTop,
@@ -164,8 +164,8 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 				mCurrentBackgroundPaint);
 
 		if (this.mCurrentBookIndex < this.mBooks.size() - 1) {
-			canvas.drawRect(mNextElementLeft, mNextElementTop, mNextElementRight,
-					mNextElementBottom, mNotCurrentPaint);
+			canvas.drawRect(mNextElementLeft, mNextElementTop,
+					mNextElementRight, mNextElementBottom, mNotCurrentPaint);
 		}
 
 		this.mCurrentFontPaint.setTextSize(this.determineMaxTextSize(
@@ -289,7 +289,7 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 	public boolean onSingleTapUp(MotionEvent e) {
 		if (this.mDateOfLastTap != null) {
 			long timeSpan = new Date().getTime() - mDateOfLastTap.getTime();
-			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks ) {
+			if (0 < timeSpan && timeSpan < this.mMillisecondsBetweenClicks) {
 				this.onLongPress(e);
 				this.mDateOfLastTap = null;
 				return true;
@@ -323,8 +323,9 @@ public class ReadableBooksWidget extends View implements OnGestureListener,
 		float y = e.getY();
 
 		if (this.mCurrentElementTop < y && y < this.mCurrentElementBottom
-				&& this.mCurrentElementLeft < x && x < this.mCurrentElementRight) {
-			((ReadSelectActivity) this.getContext()).goToRead();
+				&& this.mCurrentElementLeft < x
+				&& x < this.mCurrentElementRight) {
+			((ReadSelectActivity) this.getContext()).displayPrompt();
 		}
 	}
 

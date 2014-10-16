@@ -26,8 +26,8 @@ public class DownloadableBook extends DataItem {
 		this.isOwned = false;
 	}
 	
-	@ServerProperty("Book")
-    public UUID Book;
+	@ServerProperty("url")
+	public String url;
 	
 	@ServerProperty("fileName")
 	public String fileName;
@@ -46,4 +46,5 @@ public class DownloadableBook extends DataItem {
 
 	@ServerIgnore
 	public boolean isOwned;
+
 }

@@ -4,15 +4,19 @@ import java.util.ArrayList;
 
 import android.os.Environment;
 
+import com.example.read0r.Activities.DownloadActivity;
 import com.example.read0r.Interfaces.IDistantDataHandler;
 import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
+import com.telerik.everlive.sdk.core.EverliveApp;
 
 public class FakeDistantDataHandler implements IDistantDataHandler {
 
 	ArrayList<DownloadableBook> mBooks = new ArrayList<DownloadableBook>();
-
-	public FakeDistantDataHandler() {
+	private DownloadActivity context;
+	
+	public FakeDistantDataHandler(DownloadActivity context) {
+		this.context = context;
 
 		this.mBooks.add(new DownloadableBook("about_speed_reading.read0r",
 				"Fast Reading Description", "???", 4, "science"));
@@ -58,11 +62,11 @@ public class FakeDistantDataHandler implements IDistantDataHandler {
 		return cats;
 	}
 
-	public ArrayList<DownloadableBook> getBooks() {
-		return this.mBooks;
+	public void getBooks() {
+		this.context.updateContent(this.mBooks);
 	}
 
-	public ArrayList<DownloadableBook> getFilteredBooks(
+	public void getFilteredBooks(
 			ArrayList<String> categories) {
 		ArrayList<DownloadableBook> filtered = new ArrayList<DownloadableBook>();
 
@@ -72,7 +76,7 @@ public class FakeDistantDataHandler implements IDistantDataHandler {
 			}
 		}
 
-		return filtered;
+		this.context.updateContent(filtered);
 	}
 
 }

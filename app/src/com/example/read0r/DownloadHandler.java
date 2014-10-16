@@ -1,5 +1,6 @@
 package com.example.read0r;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.PowerManager;
+import android.util.Log;
 
 import com.example.read0r.Activities.DownloadActivity;
 import com.example.read0r.Interfaces.IDownloadHandler;
@@ -22,51 +24,58 @@ import com.telerik.everlive.sdk.core.EverliveApp;
 public class DownloadHandler implements IDownloadHandler {
 
 	public ReadableBook downloadBook(DownloadActivity context,
-			String url, DownloadableBook bookToDownload) {
+			DownloadableBook bookToDownload) {
 
-		DownloadTask task = new DownloadTask(context, url, bookToDownload);
+		DownloadTask task = new DownloadTask(context, bookToDownload);
 		task.downloadTheBook();
 
 		return new ReadableBook(Environment.getExternalStorageDirectory()
-				.getPath() + bookToDownload.fileName, bookToDownload.title,
-				bookToDownload.author, (int) bookToDownload.pages.intValue(),
-				bookToDownload.category, 0);
+				+ "/read0r/" + bookToDownload.fileName,
+				bookToDownload.title, bookToDownload.author,
+				(int) bookToDownload.pages.intValue(), bookToDownload.category,
+				0);
 	}
 
-	private class DownloadTask extends AsyncTask<String, Integer, String> {
+	private class DownloadTask extends
+			AsyncTask<String, Integer, DownloadableBook> {
 
 		private DownloadActivity mContext;
 		private PowerManager.WakeLock mWakeLock;
 		private DownloadableBook mBookToDownload;
 		private String mUrl;
 
-		public DownloadTask(DownloadActivity context, String url,
+		public DownloadTask(DownloadActivity context,
 				DownloadableBook bookToDownload) {
 			this.mContext = context;
 			this.mBookToDownload = bookToDownload;
-			this.mUrl = url;
+			this.mUrl = bookToDownload.url;
 		}
 
-		public String downloadTheBook() {
-			return this.doInBackground(this.mUrl);
+		public void downloadTheBook() {
+			AsyncTask<String, Integer, DownloadableBook> result = this
+					.execute();
+			return;
 		}
 
 		@Override
-		protected String doInBackground(String... sUrl) {
+		protected DownloadableBook doInBackground(String... str) {
+			String sUrl = this.mUrl;
 			InputStream input = null;
 			OutputStream output = null;
 			HttpURLConnection connection = null;
 			try {
-				URL url = new URL(sUrl[0]);
+				URL url = new URL(sUrl);
 				connection = (HttpURLConnection) url.openConnection();
 				connection.connect();
 
 				// expect HTTP 200 OK, so we don't mistakenly save error report
 				// instead of the file
 				if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-					return "Server returned HTTP "
-							+ connection.getResponseCode() + " "
-							+ connection.getResponseMessage();
+					Log.e("Downloaf handler error",
+							"Server returned HTTP "
+									+ connection.getResponseCode() + " "
+									+ connection.getResponseMessage());
+					return null;
 				}
 
 				// this will be useful to display download percentage
@@ -75,10 +84,17 @@ public class DownloadHandler implements IDownloadHandler {
 
 				// download the file
 				input = connection.getInputStream();
-				output = new FileOutputStream(Environment
-						.getExternalStorageDirectory().getPath()
-						+ "/read0r/"
-						+ this.mBookToDownload.fileName);
+
+				String filePath = Environment.getExternalStorageDirectory()
+						+ "/read0r/" + this.mBookToDownload.fileName;
+
+				File f = new File(filePath);
+				if (!f.exists()) {
+					f.getParentFile().mkdirs();
+					f.createNewFile();
+				}
+
+				output = new FileOutputStream(filePath);
 
 				byte data[] = new byte[4096];
 				long total = 0;
@@ -98,7 +114,8 @@ public class DownloadHandler implements IDownloadHandler {
 					output.write(data, 0, count);
 				}
 			} catch (Exception e) {
-				return e.toString();
+				Log.e("Download handler error", e.toString());
+				return null;
 			} finally {
 				try {
 					if (output != null)
@@ -111,8 +128,13 @@ public class DownloadHandler implements IDownloadHandler {
 				if (connection != null)
 					connection.disconnect();
 			}
-			mContext.onBookDownloaded(mBookToDownload);
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(DownloadableBook mBookToDownload) {
+			super.onPostExecute(mBookToDownload);
+			mContext.onBookDownloaded(mBookToDownload);
 		}
 	}
 }

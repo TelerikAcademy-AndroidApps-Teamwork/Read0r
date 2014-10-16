@@ -14,7 +14,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class MainMenuActivity extends ActionBarActivity implements OnClickListener {
+public class MainMenuActivity extends ActionBarActivity implements
+		OnClickListener {
 
 	private Intent mReadSelectIntent;
 	private Intent mDownloadIntent;
@@ -38,8 +39,10 @@ public class MainMenuActivity extends ActionBarActivity implements OnClickListen
 				SettingsActivity.class);
 
 		this.mReadBtn = (Button) this.findViewById(R.id.main_readButton);
-		this.mDownloadBtn = (Button) this.findViewById(R.id.main_downloadButton);
-		this.mSettingsBtn = (Button) this.findViewById(R.id.main_settingsButton);
+		this.mDownloadBtn = (Button) this
+				.findViewById(R.id.main_downloadButton);
+		this.mSettingsBtn = (Button) this
+				.findViewById(R.id.main_settingsButton);
 		this.mQuitBtn = (Button) this.findViewById(R.id.main_quitButton);
 
 		this.mReadBtn.setOnClickListener(this);
@@ -48,7 +51,7 @@ public class MainMenuActivity extends ActionBarActivity implements OnClickListen
 		this.mQuitBtn.setOnClickListener(this);
 
 		this.mTheme = com.example.read0r.Settings.getTheme(this);
-		
+
 		this.applyTheme();
 	}
 
@@ -101,7 +104,8 @@ public class MainMenuActivity extends ActionBarActivity implements OnClickListen
 	}
 
 	public void quit() {
-		throw new Error("Not Implemented");
+		android.os.Process.killProcess(android.os.Process.myPid());
+		System.exit(1);
 	}
 
 }

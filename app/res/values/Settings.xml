@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="useFakeDistantData">true</bool>
-    <bool name="useFakeLocalData">true</bool>
-    <bool name="useFakeDocReader">true</bool>
-    <bool name="useFakeDocDownloader">true</bool>
+    <bool name="useFakeDistantData">false</bool>
+    <bool name="useFakeDocDownloader">false</bool>
+    <bool name="useFakeLocalData">false</bool>
+    <bool name="useFakeDocReader">false</bool>
     
-    <bool name="useDeviceHardwere">false</bool>
-    <bool name="useFacebookSDK">false</bool>
+    <bool name="useFacebookSDK">true</bool>
+    <bool name="useDeviceHardwere">true</bool>
 </resources>

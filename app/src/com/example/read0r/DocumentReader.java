@@ -72,7 +72,9 @@ public class DocumentReader implements IDocumentReader {
 		String readString = null;
 		if (isSDcardAvailable() || this.mSkipSDCardCheck) {
 			try {
-				fis = mContext.openFileInput(this.mDocument.fileAddress);
+				File file = new File(this.mDocument.fileAddress);
+				fis = new FileInputStream(file);
+
 				InputStreamReader isr = new InputStreamReader(fis);
 
 				// Skipping to the index...
@@ -123,10 +125,12 @@ public class DocumentReader implements IDocumentReader {
 	public long getDocLength() {
 		if (this.mDocument.length == 0) {
 			File file = new File(this.mDocument.fileAddress);
-			if (file.exists()) {
+			try {
 				return file.length();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return 0;
 			}
-			return 0;
 		}
 		return this.mDocument.length;
 	}

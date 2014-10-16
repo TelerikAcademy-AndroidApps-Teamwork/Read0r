@@ -1,5 +1,6 @@
 package com.example.read0r.Activities;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,9 @@ import com.example.read0r.Models.DownloadableBook;
 import com.example.read0r.Models.ReadableBook;
 import com.example.read0r.Views.DownloadableBooksWidget;
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.facades.read.GetByIdFacade;
+import com.telerik.everlive.sdk.core.result.RequestResult;
+import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -34,10 +38,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -54,10 +60,11 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 public class DownloadActivity extends ActionBarActivity {
 
 	private Intent mDownloadFilterIntent;
@@ -73,13 +80,12 @@ public class DownloadActivity extends ActionBarActivity {
 	private TextView mPageCounter;
 	private DownloadableBook mBookToDownload;
 	private PopupWindow mPopup;
+	private ProgressBar mProgressBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download);
-
-		checkConnectivity();
 
 		this.mDownloadFilterIntent = new Intent(DownloadActivity.this,
 				DownloadFilterActivity.class);
@@ -94,15 +100,15 @@ public class DownloadActivity extends ActionBarActivity {
 				R.bool.useFakeDocDownloader);
 
 		if (distantDataIsFake) {
-			this.mDistantDataHandler = new FakeDistantDataHandler();
+			this.mDistantDataHandler = new FakeDistantDataHandler(this);
 		} else {
-			this.mDistantDataHandler = new Read0rDistantData();
+			this.mDistantDataHandler = new Read0rDistantData(this);
 		}
 
 		if (localDataIsFake) {
 			this.mLocalDataHandler = new FakeLocalDataHandler();
 		} else {
-			this.mLocalDataHandler = new Read0rLocalData();
+			this.mLocalDataHandler = new Read0rLocalData(this);
 		}
 
 		if (downloaderIsFake) {
@@ -111,6 +117,8 @@ public class DownloadActivity extends ActionBarActivity {
 			this.mDownloadHandler = new DownloadHandler();
 		}
 
+		this.mProgressBar = (ProgressBar) this
+				.findViewById(R.id.download_progressBar);
 		this.mBackBtn = (Button) this.findViewById(R.id.download_backButton);
 		this.mFilterBtn = (Button) this
 				.findViewById(R.id.download_filterButton);
@@ -131,7 +139,10 @@ public class DownloadActivity extends ActionBarActivity {
 		});
 
 		this.applyTheme();
-		this.updateFilters(this.getIntent());
+
+		checkConnectivity();
+
+		this.mFilters = new ArrayList<String>();
 		this.updateContent();
 	}
 
@@ -149,21 +160,29 @@ public class DownloadActivity extends ActionBarActivity {
 		this.mFilters = this.mDistantDataHandler.getCategories();
 	}
 
-	private void updateContent() {
-		this.mContent = this.mDistantDataHandler
-				.getFilteredBooks(this.mFilters);
-		List<ReadableBook> ownedBooks = this.mLocalDataHandler.getBooks();
-
-		for (DownloadableBook book : this.mContent) {
-			for (ReadableBook ownedBook : ownedBooks) {
-				if (book.title == ownedBook.title) {
-					book.isOwned = true;
-					break;
+	public void updateContent(ArrayList<DownloadableBook> data) {
+		this.mContent = data;
+		List<ReadableBook> ownedBooks;
+		try {
+			ownedBooks = this.mLocalDataHandler.getBooks();
+			for (DownloadableBook book : this.mContent) {
+				for (ReadableBook ownedBook : ownedBooks) {
+					if (book.title.equals(ownedBook.title)) {
+						book.isOwned = true;
+						break;
+					}
 				}
 			}
+			this.mBooksWidget.setBooks(this.mContent);
+			this.mProgressBar.setVisibility(View.INVISIBLE);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+	}
 
-		this.mBooksWidget.setBooks(this.mContent);
+	private void updateContent() {
+		this.mProgressBar.setVisibility(View.VISIBLE);
+		this.mDistantDataHandler.getFilteredBooks(this.mFilters);
 	}
 
 	@Override
@@ -199,12 +218,22 @@ public class DownloadActivity extends ActionBarActivity {
 		if (!book.isOwned) {
 			showDownloadPrompt();
 		} else {
+
+			Display display = getWindowManager().getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			int width = size.x;
+			int height = size.y;
+
 			LayoutInflater inflater = (LayoutInflater) this
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = (View) inflater.inflate(R.layout.popup_message,
 					(ViewGroup) findViewById(R.id.popup_container));
 
-			this.mPopup = new PopupWindow(layout, 200, 150, false);
+			int sizeOfPopup = (int) Math.min(width / 1.2, height / 1.2);
+
+			this.mPopup = new PopupWindow(layout, sizeOfPopup, sizeOfPopup,
+					false);
 			mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
 			ViewGroup popupContainer = (ViewGroup) layout;
@@ -224,34 +253,35 @@ public class DownloadActivity extends ActionBarActivity {
 		if (downloadAccepted) {
 			boolean distantDataIsFake = this.getResources().getBoolean(
 					R.bool.useFakeDistantData);
-			String url;
-			if (distantDataIsFake) {
-				url = "";
-			} else {
-				EverliveApp everliveApp = ((Read0rDistantData) this.mDistantDataHandler)
-						.getEverlive();
-				UUID id = this.mBookToDownload.Book;
-				// TODO: Fix this somehow
-				// url = everliveApp.workWith().files().getFileDownloadUrl(id);
-				url = "http://www.fake.com";
-			}
+
+			try {
 			ReadableBook downloadedBook = this.mDownloadHandler.downloadBook(
-					this, url, this.mBookToDownload);
-			this.mLocalDataHandler.addBook(downloadedBook);
-			this.updateContent();
-			onBookDownloaded(this.mBookToDownload);
+					this, this.mBookToDownload);
+				this.mLocalDataHandler.addBook(downloadedBook);
+				this.updateContent();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void showDownloadPrompt() {
 
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		int height = size.y;
+
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View layout = (View) inflater.inflate(R.layout.prompt_download,
+		View layout = (View) inflater.inflate(R.layout.prompt_basic,
 				(ViewGroup) findViewById(R.id.popup_element));
 
-		this.mPopup = new PopupWindow(layout, 200, 200, false);
+		int sizeOfPopup = (int) Math.min(width / 1.2, height / 1.2);
+
+		this.mPopup = new PopupWindow(layout, sizeOfPopup, sizeOfPopup, false);
 		mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
 		ViewGroup popupContainer = (ViewGroup) layout;
@@ -296,20 +326,22 @@ public class DownloadActivity extends ActionBarActivity {
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void onBookDownloaded(DownloadableBook book) {
 
-		Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
-				R.drawable.attention);
+		try {
+			Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+					R.drawable.attention);
 
-		Notification.Builder builder = new Notification.Builder(this)
-				.setSmallIcon(R.drawable.attention)
-				.setLargeIcon(
-						Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
-				.setContentTitle("Read0r book downloaded")
-				.setContentText("'" + book.title + "' by " + book.author);
-
-		Notification notification = builder.build();
-
-		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
-				.notify(R.id.finishedDownloadNotifivation_id, notification);
+			Notification.Builder builder = new Notification.Builder(this);
+			builder.setSmallIcon(R.drawable.attention);
+			builder.setLargeIcon(Bitmap.createScaledBitmap(largeIcon, 128, 128,
+					false));
+			builder.setContentTitle("Read0r book downloaded");
+			builder.setContentText("'" + book.title + "' by " + book.author);
+			Notification notification = builder.getNotification();
+			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+					.notify(R.id.finishedDownloadNotifivation_id, notification);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void checkConnectivity() {
@@ -319,31 +351,12 @@ public class DownloadActivity extends ActionBarActivity {
 		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 		boolean isConnected = activeNetwork != null;
 		isConnected = isConnected && activeNetwork.isConnectedOrConnecting();
-		
-		if (!isConnected) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setCancelable(true);
-			builder.setTitle("No internet connection.");
-			builder.setInverseBackgroundForced(true);
-			builder.setNegativeButton("Yes",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-							finish();
-						}
-					});
-			builder.setNegativeButton("No",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-						}
-					});
 
-			AlertDialog alert = builder.create();
-			alert.setMessage("The download section is useless without internet connection.\nDo you want to go back?");
-			alert.show();
+		if (!isConnected) {
+			Toast.makeText(
+					this,
+					"This feature requires internet connection. Please reconnect and try again.",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 }

@@ -12,8 +12,8 @@ public class FakeDownloadHandler implements IDownloadHandler {
 
 	@Override
 	public ReadableBook downloadBook(DownloadActivity context,
-			String url, DownloadableBook bookToDownload) {
-		
+			DownloadableBook bookToDownload) {
+
 		return new ReadableBook(Environment.getExternalStorageDirectory()
 				.getPath() + bookToDownload.fileName, bookToDownload.title,
 				bookToDownload.author, (int) bookToDownload.pages.intValue(),

@@ -8,7 +8,7 @@ public interface IDistantDataHandler {
 	
 	ArrayList<String> getCategories();
 
-	ArrayList<DownloadableBook> getBooks();
+	void getBooks();
 
-	ArrayList<DownloadableBook> getFilteredBooks(ArrayList<String> categories);
+	void getFilteredBooks(ArrayList<String> categories);
 }

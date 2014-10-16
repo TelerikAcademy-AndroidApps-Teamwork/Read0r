@@ -1,6 +1,7 @@
 package com.example.read0r;
 
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,10 +21,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private static final String DATABASE_NAME = "readable_books.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 	private static final int DATABASE_VERSION = 1;
+	private static DatabaseHelper helper;
 	
 	// the DAO object we use to access the SimpleData table
 	private Dao<ReadableBook, Integer> noteDao = null;
 	private RuntimeExceptionDao<ReadableBook, Integer> noteRuntimeDao = null;
+	private Dao<ReadableBook, Integer> simpleDao;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -69,10 +72,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return noteRuntimeDao;
 	}
 
+	public static synchronized DatabaseHelper getHelper(Context context) {
+		if (helper == null) {
+			helper = new DatabaseHelper(context);
+		}
+		return helper;
+	}
 
 	@Override
 	public void close() {
 		super.close();
 		noteDao = null;
+	}
+
+
+	public Dao<ReadableBook, Integer> createSimpleDataDao() throws SQLException {
+		if (simpleDao == null) {
+			simpleDao = getDao(ReadableBook.class);
+		}
+		return simpleDao;
 	}
 }

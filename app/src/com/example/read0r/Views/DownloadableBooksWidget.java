@@ -67,7 +67,7 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		this.setBooks(new ArrayList<DownloadableBook>());
-		this.getBooks().add(new DownloadableBook("", "", "", 1, ""));
+		// this.getBooks().add(new DownloadableBook("", "", "", 1, ""));
 
 		this.mOwnedBookPaint = new Paint();
 		this.mOwnedBookPaint.setColor(Color.LTGRAY);
@@ -144,8 +144,8 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 					- this.mViewPortion * 2);
 			this.mTextPaint.setTextSize(fontSize);
 
-			canvas.drawTextOnPath(book.title, this.mTitlePath, 0, currentTop,
-					this.mTextPaint);
+			canvas.drawText(book.title, this.mViewPortion, currentTop
+					+ fontSize, this.mTextPaint);
 			canvas.drawText(getAuthorPagesAndCategory(book), this.mViewPortion,
 					currentTop + this.mItemHeight - (fontSize / 2),
 					this.mTextPaint);
@@ -201,7 +201,9 @@ public class DownloadableBooksWidget extends View implements OnGestureListener,
 
 	public void setBooks(List<DownloadableBook> books) {
 		this.mBooks = books;
+		this.mPageChanged = true;
 		this.mPageNumber = 0;
+		this.invalidate();
 	}
 
 	public void selectAt(float f) {

@@ -1,5 +1,6 @@
 package com.example.read0r.Activities;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import twitter4j.Status;
@@ -30,16 +31,23 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -87,29 +95,28 @@ public class ReadActivity extends ActionBarActivity implements
 	private TextView mTitleView;
 	private ReadableBook mBookToRead;
 	private PopupWindow mPopup;
+	private boolean twitterCanceled;
+
+	private static SharedPreferences mSharedPreferences;
+
+	// Replace the following value with the Consumer key
+	static String TWITTER_CONSUMER_KEY = "2W8bYiAtb4RY66HWXAVYJ4SIo";
+	// Replace the following value with the Consumer secret
+	static String TWITTER_CONSUMER_SECRET = "LpgZyYXQ84NJ35TeeYkiFxSWwNRWpHbE7kBLaGuEuadZLF7oFM";
+
+	static String PREFERENCE_NAME = "twitter _ oauth";
+	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
+
+	static final String TWITTER_CALLBACK_URL = "oauth://tcookbook";
+
+	static final String URL_TWITTER_AUTH = "auth_url";
+	static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
+	static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
 
 	private static Twitter twitter;
 	private static RequestToken requestToken;
-
-	private String TWITTER_CONSUMER_KEY = "2W8bYiAtb4RY66HWXAVYJ4SIo";
-	private String TWITTER_CONSUMER_SECRET = "LpgZyYXQ84NJ35TeeYkiFxSWwNRWpHbE7kBLaGuEuadZLF7oFM";
-
-	// Preference Constants
-	private String PREFERENCE_NAME = "twitter_oauth";
-	private String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-	private String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-	private String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
-
-	private String TWITTER_CALLBACK_URL = "oauth://t4jsample";
-
-	private String USER_TOKEN = "";
-	private String USER_SECRET = "";
-
-	private String URL_TWITTER_AUTH = "auth_url";
-	private String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-	private String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
-	
-	private boolean twitterLoggedIn = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +125,9 @@ public class ReadActivity extends ActionBarActivity implements
 
 		loadSettings();
 		loadBookInformation();
+
+		mSharedPreferences = getApplicationContext().getSharedPreferences(
+				"read0rTwitter", 0);
 
 		this.guestureDetector = new GestureDetector(this, this);
 		this.scaleDetector = new ScaleGestureDetector(this, this);
@@ -138,9 +148,13 @@ public class ReadActivity extends ActionBarActivity implements
 		if (localDataIsFake) {
 			this.mLocalDataHandler = new FakeLocalDataHandler();
 		} else {
-			this.mLocalDataHandler = new Read0rLocalData();
+			this.mLocalDataHandler = new Read0rLocalData(this);
 		}
-		this.mBookToRead = this.mLocalDataHandler.getBookById(bookId);
+		try {
+			this.mBookToRead = this.mLocalDataHandler.getBookById(bookId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadSettings() {
@@ -272,37 +286,53 @@ public class ReadActivity extends ActionBarActivity implements
 		Toast.makeText(this, "You have reached the end of the book.",
 				Toast.LENGTH_LONG).show();
 
+		askToBoastOnline();
+
 		showNotification("You have finished reading a book",
 				"The book's name was '" + this.mBookToRead.title
 						+ "' and it was writen by by "
 						+ this.mBookToRead.author,
 				R.id.notificationId_finishedBook);
 
-		askToBoastOnline();
 	}
 
 	private void showNotification(String title, String content,
 			int notificationidId) {
-		Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
-				R.drawable.attention);
-		Notification.Builder builder = new Notification.Builder(this)
-				.setSmallIcon(R.drawable.attention)
-				.setLargeIcon(
-						Bitmap.createScaledBitmap(largeIcon, 128, 128, false))
-				.setContentTitle(title).setContentText(content);
-		Notification notification = builder.build();
-		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
-				.notify(notificationidId, notification);
+
+		try {
+			Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+					R.drawable.attention);
+			Notification.Builder builder = new Notification.Builder(this)
+					.setSmallIcon(R.drawable.attention)
+					.setLargeIcon(
+							Bitmap.createScaledBitmap(largeIcon, 128, 128,
+									false)).setContentTitle(title)
+					.setContentText(content);
+			Notification notification = builder.getNotification();
+			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+					.notify(notificationidId, notification);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void askToBoastOnline() {
+
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		int height = size.y;
+
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View layout = (View) inflater.inflate(R.layout.prompt_download,
+		View layout = (View) inflater.inflate(R.layout.prompt_basic,
 				(ViewGroup) findViewById(R.id.popup_element));
 
-		this.mPopup = new PopupWindow(layout, 200, 200, false);
+		int sizeOfPopup = (int) Math.min(width / 1.2, height / 1.2);
+
+		this.mPopup = new PopupWindow(layout, sizeOfPopup, sizeOfPopup, false);
 		mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
 		ViewGroup popupContainer = (ViewGroup) layout;
@@ -334,39 +364,16 @@ public class ReadActivity extends ActionBarActivity implements
 
 	private void onBoastOnlineChoice(boolean boastOnline) {
 		if (boastOnline) {
-			
+
 			loginToTwitter();
-			if (!twitterLoggedIn) {
-				return;
-			}
-			
-			ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setDebugEnabled(true)
-			  .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
-			  .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
-			  .setOAuthAccessToken(USER_TOKEN)
-			  .setOAuthAccessTokenSecret(USER_SECRET);
-			TwitterFactory tf = new TwitterFactory(cb.build());
-			Twitter twitter = tf.getInstance();
-			
-			String latestStatus = "I've just read '"+ this.mBookToRead.title +"' via read0r.";
-			
-			Status status;
-			try {
-				status = twitter.updateStatus(latestStatus);
-			    String str = status.getText();
 
-				showNotification("Tweet Success",
-						"Check your twitter account for more details",
-						R.id.notificationId_twitter);
-				
-			} catch (TwitterException e) {
-				e.printStackTrace();
-
-				showNotification("Tweet Failed",
-						"There was a problem in the tweet creation and/or sending",
-						R.id.notificationId_twitterError);
+			while (!isTwitterLoggedInAlready() && !twitterCanceled) {
 			}
+
+			String status = "Whatever I want";
+			new updateTwitterStatus().execute(status);
+
+			logoutFromTwitter();
 		}
 		this.finish();
 	}
@@ -392,13 +399,21 @@ public class ReadActivity extends ActionBarActivity implements
 	}
 
 	private void askToSaveProgress() {
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		int height = size.y;
+
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View layout = (View) inflater.inflate(R.layout.prompt_download,
+		View layout = (View) inflater.inflate(R.layout.prompt_basic,
 				(ViewGroup) findViewById(R.id.popup_element));
 
-		this.mPopup = new PopupWindow(layout, 200, 200, false);
+		int sizeOfPopup = (int) Math.min(width / 1.2, height / 1.2);
+
+		this.mPopup = new PopupWindow(layout, sizeOfPopup, sizeOfPopup, false);
 		mPopup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
 		ViewGroup popupContainer = (ViewGroup) layout;
@@ -418,6 +433,7 @@ public class ReadActivity extends ActionBarActivity implements
 			public void onClick(View v) {
 				mPopup.dismiss();
 				onSaveProgressChoice(false);
+				finish();
 			}
 		});
 		Ok.setOnClickListener(new OnClickListener() {
@@ -425,6 +441,7 @@ public class ReadActivity extends ActionBarActivity implements
 			public void onClick(View v) {
 				mPopup.dismiss();
 				onSaveProgressChoice(true);
+				finish();
 			}
 		});
 	}
@@ -437,7 +454,15 @@ public class ReadActivity extends ActionBarActivity implements
 		boolean docReaderIsFake = this.getResources().getBoolean(
 				R.bool.useFakeDocReader);
 		if (!docReaderIsFake) {
-			this.mLocalDataHandler.updateBook(this.mBookToRead);
+			try {
+				this.mLocalDataHandler.updateBook(this.mBookToRead);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				showNotification(
+						"Read0r progress was not saved",
+						"The local data base of the app was not working normally.",
+						R.id.notificationId_error);
+			}
 		} else {
 			showNotification(
 					"Read0r progress was not saved",
@@ -507,8 +532,10 @@ public class ReadActivity extends ActionBarActivity implements
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		if (velocityX < 0) {
+		if (velocityX > 0) {
 			this.mQueueHandler.goBack();
+			Toast.makeText(getApplicationContext(), "going back...",
+					Toast.LENGTH_SHORT).show();
 		}
 		return true;
 	}
@@ -522,8 +549,6 @@ public class ReadActivity extends ActionBarActivity implements
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-			Toast.makeText(getApplicationContext(), "working",
-					Toast.LENGTH_SHORT).show();
 			float distanceSm = event.values[0];
 			if (distanceSm < 20) {
 				if (!this.mPaused) {
@@ -539,47 +564,98 @@ public class ReadActivity extends ActionBarActivity implements
 	}
 
 	private void loginToTwitter() {
-		ConfigurationBuilder builder = new ConfigurationBuilder();
-		builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-		builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
-		Configuration configuration = builder.build();
+		if (!isTwitterLoggedInAlready()) {
+			ConfigurationBuilder builder = new ConfigurationBuilder();
+			builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+			builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+			Configuration configuration = builder.build();
 
-		TwitterFactory factory = new TwitterFactory(configuration);
-		twitter = factory.getInstance();
+			TwitterFactory factory = new TwitterFactory(configuration);
+			twitter = factory.getInstance();
 
-		try {
-			requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
-			this.startActivity(new Intent(Intent.ACTION_VIEW, Uri
-					.parse(requestToken.getAuthenticationURL())));
-		} catch (TwitterException e) {
-			e.printStackTrace();
-			showNotification("Twitter login failed",
-					"There was a problem in the twitter login",
-					R.id.notificationId_twitterError);
-			twitterLoggedIn = false;
-			return;
-		}
-		
-		Uri uri = getIntent().getData();
-		if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
-			// oAuth verifier
-			String verifier = uri.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
-
-			try {
-				// Get the access token
-				AccessToken accessToken = twitter.getOAuthAccessToken(
-						requestToken, verifier);
-
-				USER_TOKEN = accessToken.getToken();
-				USER_SECRET = accessToken.getTokenSecret();
-				twitterLoggedIn = true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				showNotification("Twitter login failed",
-						"There was a problem in the twitter login",
-						R.id.notificationId_twitterError);
-				twitterLoggedIn = false;
+			if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+				try {
+					requestToken = twitter
+							.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+					this.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+							.parse(requestToken.getAuthenticationURL())));
+				} catch (TwitterException e) {
+					e.printStackTrace();
+					twitterCanceled = true;
+				}
+			} else {
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							requestToken = twitter
+									.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+							startActivity(new Intent(Intent.ACTION_VIEW, Uri
+									.parse(requestToken.getAuthenticationURL())));
+						} catch (TwitterException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
 			}
+		} else {
+			Toast.makeText(getApplicationContext(),
+					"Already logged into Twitter", Toast.LENGTH_LONG).show();
 		}
+	}
+
+	class updateTwitterStatus extends AsyncTask<String, String, String> {
+
+		protected String doInBackground(String... args) {
+			String status = args[0];
+			try {
+				ConfigurationBuilder builder = new ConfigurationBuilder();
+				builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+				builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+
+				String access_token = mSharedPreferences.getString(
+						PREF_KEY_OAUTH_TOKEN, "");
+				String access_token_secret = mSharedPreferences.getString(
+						PREF_KEY_OAUTH_SECRET, "");
+
+				AccessToken accessToken = new AccessToken(access_token,
+						access_token_secret);
+				Twitter twitter = new TwitterFactory(builder.build())
+						.getInstance(accessToken);
+
+				twitter4j.Status response = twitter.updateStatus(status);
+
+			} catch (TwitterException e) {
+				Log.d("*** Twitter Update Error: ", e.getMessage());
+			}
+			return null;
+		}
+
+		protected void onPostExecute(String file_url) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(getApplicationContext(),
+							"Status tweeted successfully", Toast.LENGTH_SHORT)
+							.show();
+				}
+			});
+		}
+
+	}
+
+	private void logoutFromTwitter() {
+		Editor e = mSharedPreferences.edit();
+		e.remove(PREF_KEY_OAUTH_TOKEN);
+		e.remove(PREF_KEY_OAUTH_SECRET);
+		e.remove(PREF_KEY_TWITTER_LOGIN);
+		e.commit();
+	}
+
+	private boolean isTwitterLoggedInAlready() {
+		return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+	}
+
+	protected void onResume() {
+		super.onResume();
 	}
 }
